@@ -7,6 +7,7 @@
     <RootNamespace>IPA_Praesentationsverwaltung</RootNamespace>
     <UserSecretsId>065e14a3-3ef8-4e6d-93ff-1ce2b9c2d1a1</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>

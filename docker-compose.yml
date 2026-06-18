@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # 1. Deine ASP.NET Core Web-App (C# MVC)
+  ipa-praesentationsverwaltung:
+    image: ${DOCKER_REGISTRY-}ipapraesentationsverwaltung
+    build:
+      context: .
+      dockerfile: IPA-Praesentationsverwaltung/Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    depends_on:
+      - sql-db
+
+  # 2. Deine lokale MSSQL Datenbankinstanz (wie im Detailsbeschrieb gefordert)
+  sql-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql-db-container
+    ports:
+      - "1433:1433" # Läuft fix auf Port 1433
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=MeinSicheresPasswort123! # Ändere dies bei Bedarf (starkes Passwort!)
+    volumes:
+      - mssql-data:/var/opt/mssql
+
+volumes:
+  mssql-data:
