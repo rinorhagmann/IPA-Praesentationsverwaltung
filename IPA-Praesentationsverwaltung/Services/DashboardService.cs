@@ -31,37 +31,12 @@ public sealed class DashboardService : IDashboardService
         // Outstanding registrations: how many selections are still missing overall.
         int pending = registrationsPerStudent.Sum(count => Math.Max(0, Student.RequiredSelectionCount - count));
 
-        int conflicts = await CountConflictsAsync(cancellationToken);
-
         return new DashboardViewModel
         {
             TotalStudents = totalStudents,
             StudentsWithCompleteSelection = completed,
             TotalPresentations = totalPresentations,
-            PendingRegistrations = pending,
-            PotentialConflicts = conflicts
+            PendingRegistrations = pending
         };
-    }
-
-    /// <summary>
-    /// Counts data integrity issues: presentations exceeding their observer
-    /// capacity and students booked into two presentations at the same time.
-    /// With the rules enforced this should always be zero, but it surfaces any
-    /// manual edits that broke an invariant.
-    /// </summary>
-    private async Task<int> CountConflictsAsync(CancellationToken cancellationToken)
-    {
-        int overCapacity = await _dbContext.Presentations
-            .CountAsync(p => p.Registrations.Count > p.MaxObservers, cancellationToken);
-
-        // Load each student's chosen start times and count those with a duplicate.
-        List<List<DateTime>> startTimesPerStudent = await _dbContext.Students
-            .Select(s => s.Registrations.Select(r => r.Presentation!.StartsAt).ToList())
-            .ToListAsync(cancellationToken);
-
-        int doubleBooked = startTimesPerStudent
-            .Count(times => times.Count != times.Distinct().Count());
-
-        return overCapacity + doubleBooked;
     }
 }

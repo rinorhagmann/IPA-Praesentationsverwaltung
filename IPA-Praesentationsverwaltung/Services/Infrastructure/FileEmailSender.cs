@@ -1,26 +1,26 @@
 using System.Text;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace IPA_Praesentationsverwaltung.Services.Infrastructure;
 
 /// <summary>
 /// Development e-mail sender that does not require an SMTP server: every message
 /// is logged and, on a best-effort basis, written to a ".eml"-style file in an
-/// outbox directory. This keeps the notification flow fully functional in the
-/// local Docker environment while leaving the production transport pluggable.
+/// outbox directory. Used automatically when no SMTP host is configured.
 /// </summary>
 public sealed class FileEmailSender : IEmailSender
 {
     private readonly ILogger<FileEmailSender> _logger;
     private readonly string _outboxPath;
 
-    public FileEmailSender(ILogger<FileEmailSender> logger, IWebHostEnvironment environment, IConfiguration configuration)
+    public FileEmailSender(IOptions<EmailOptions> options, ILogger<FileEmailSender> logger)
     {
         _logger = logger;
 
         // Allow overriding the location; default to a writable temp subdirectory
         // so the non-root container user can always create it.
-        _outboxPath = configuration["Email:OutboxPath"]
+        _outboxPath = options.Value.OutboxPath
             ?? Path.Combine(Path.GetTempPath(), "wgbs-mail-outbox");
     }
 
@@ -34,7 +34,9 @@ public sealed class FileEmailSender : IEmailSender
             .AppendLine(body)
             .ToString();
 
-        _logger.LogInformation("Outgoing e-mail to {Recipient} (subject: {Subject})", recipient, subject);
+        _logger.LogInformation(
+            "Outgoing e-mail to {Recipient} (subject: {Subject}). No SMTP host configured – stored in the outbox only.",
+            recipient, subject);
 
         // Persisting the message is a convenience for inspection during
         // development and must never break the calling flow.

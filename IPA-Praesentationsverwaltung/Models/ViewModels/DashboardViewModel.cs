@@ -14,7 +14,4 @@ public class DashboardViewModel
 
     /// <summary>Number of registrations still missing for a full assignment.</summary>
     public int PendingRegistrations { get; init; }
-
-    /// <summary>Number of detected scheduling conflicts (over capacity / double booking).</summary>
-    public int PotentialConflicts { get; init; }
 }

@@ -39,6 +39,9 @@ appsettings.Development.json
 appsettings.Local.json
 secrets.json
 .microsoft.visualstudio.secrets.json
+# SMTP-Zugangsdaten für Docker (Vorlage .env.example bleibt versioniert)
+.env
+!.env.example
 
 # --- Lokale Datenbankdateien (SQL Server LocalDB / Express) ---
 *.mdf

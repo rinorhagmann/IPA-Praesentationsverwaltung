@@ -42,6 +42,33 @@ Healthcheck, wendet die EF-Core-Migrationen an und legt den Standard-Admin an.
 > Das Passwort sollte nach dem ersten Login geändert werden. Die Zugangsdaten
 > sind über `appsettings.json` (Abschnitt `DefaultAdmin`) konfigurierbar.
 
+## E-Mail-Versand (SMTP)
+
+Standardmässig (ohne SMTP-Konfiguration) werden E-Mails nur protokolliert und in
+einen Outbox-Ordner geschrieben (Entwicklungsmodus). Für den **echten Versand**
+muss ein SMTP-Server konfiguriert werden.
+
+**Mit Docker:** `.env.example` nach `.env` kopieren und die SMTP-Zugangsdaten
+eintragen (die Datei ist gitignored und wird nicht ins Image eingebacken):
+
+```bash
+cp .env.example .env   # danach Werte ausfüllen
+docker compose up --build
+```
+
+**Lokal (ohne Docker):** Werte in `appsettings.Development.json` oder als
+User Secrets hinterlegen, z. B.:
+
+```bash
+dotnet user-secrets set "Email:Smtp:Host" "smtp.gmail.com"
+dotnet user-secrets set "Email:Smtp:User" "deine.adresse@gmail.com"
+dotnet user-secrets set "Email:Smtp:Password" "<App-Passwort>"
+dotnet user-secrets set "Email:From" "deine.adresse@gmail.com"
+```
+
+> Für Gmail wird ein **App-Passwort** benötigt (nicht das Konto-Passwort) und
+> `Email:From` muss mit `Email:Smtp:User` übereinstimmen.
+
 ## Lokale Entwicklung (ohne Docker)
 
 Eine erreichbare MSSQL-Instanz wird benötigt (Verbindungszeichenfolge in

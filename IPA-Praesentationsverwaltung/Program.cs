@@ -29,7 +29,20 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddSingleton<IPasswordHasher, Pbkdf2PasswordHasher>();
 builder.Services.AddSingleton<ILoginThrottleService, MemoryLoginThrottleService>();
-builder.Services.AddSingleton<IEmailSender, FileEmailSender>();
+
+// E-mail: use real SMTP delivery when a host is configured, otherwise fall back
+// to the development file sender. The "Email" configuration section is bound to
+// EmailOptions (host, credentials, sender address).
+builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection(EmailOptions.SectionName));
+var emailOptions = builder.Configuration.GetSection(EmailOptions.SectionName).Get<EmailOptions>() ?? new EmailOptions();
+if (emailOptions.IsSmtpConfigured)
+{
+    builder.Services.AddSingleton<IEmailSender, SmtpEmailSender>();
+}
+else
+{
+    builder.Services.AddSingleton<IEmailSender, FileEmailSender>();
+}
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAssignmentRuleService, AssignmentRuleService>();

@@ -14,6 +14,15 @@ services:
       - ASPNETCORE_HTTPS_PORTS=8081
       # The app reaches the SQL container via the compose service name "sql-db".
       - ConnectionStrings__DefaultConnection=Server=sql-db,1433;Database=IPADatabase;User Id=sa;Password=MeinSicheresPasswort123!;TrustServerCertificate=True;Encrypt=False;
+      # SMTP settings for real e-mail delivery. Provide these via a .env file
+      # (see .env.example); when SMTP_HOST is empty the dev file sender is used.
+      - Email__From=${SMTP_FROM:-noreply@wgbs.ch}
+      - Email__FromName=${SMTP_FROM_NAME:-Wirtschaftsgymnasium Basel}
+      - Email__Smtp__Host=${SMTP_HOST:-}
+      - Email__Smtp__Port=${SMTP_PORT:-587}
+      - Email__Smtp__User=${SMTP_USER:-}
+      - Email__Smtp__Password=${SMTP_PASSWORD:-}
+      - Email__Smtp__EnableSsl=${SMTP_ENABLE_SSL:-true}
     depends_on:
       sql-db:
         condition: service_healthy
