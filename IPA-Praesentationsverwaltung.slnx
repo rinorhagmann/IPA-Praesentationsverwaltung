@@ -3,4 +3,5 @@
     <Build />
   </Project>
   <Project Path="IPA-Praesentationsverwaltung/IPA-Praesentationsverwaltung.csproj" />
+  <Project Path="IPA-Praesentationsverwaltung.Tests/IPA-Praesentationsverwaltung.Tests.csproj" />
 </Solution>

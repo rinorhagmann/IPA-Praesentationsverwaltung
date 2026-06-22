@@ -1,0 +1,53 @@
+@model RoomObserverList
+@{
+    string title = ViewData["Title"] as string ?? "Liste";
+    Layout = "_Layout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3 no-print">
+    <h1 class="h3 m-0">@title</h1>
+    <button class="btn btn-wgbs-dark" onclick="window.print()">Drucken</button>
+</div>
+
+<p class="text-muted">Erstellt am @Model.GeneratedAt.ToString("dd.MM.yyyy HH:mm") Uhr</p>
+
+@if (Model.Items.Count == 0)
+{
+    <p>Es sind keine Daten vorhanden.</p>
+}
+
+<table class="table table-bordered align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Raum</th>
+            <th>Datum / Uhrzeit</th>
+            <th>Thema</th>
+            <th>Zuseher</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.RoomName</td>
+                <td>@item.StartsAt.ToString("dd.MM.yyyy HH:mm") Uhr</td>
+                <td>@item.PresentationTopic</td>
+                <td>
+                    @if (item.ObserverNames.Count == 0)
+                    {
+                        <span class="text-muted">keine</span>
+                    }
+                    else
+                    {
+                        <ul class="m-0 ps-3">
+                            @foreach (var name in item.ObserverNames)
+                            {
+                                <li>@name</li>
+                            }
+                        </ul>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

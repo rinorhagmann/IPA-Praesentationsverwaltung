@@ -1,0 +1,48 @@
+@model AdminFormViewModel
+@{
+    ViewData["Title"] = Model.IsEdit ? "Admin-Login bearbeiten" : "Admin-Login erstellen";
+    ViewData["ActiveNav"] = "Admins";
+    Layout = "_AdminLayout";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="wgbs-card" style="max-width: 520px;">
+    <form asp-controller="Admin" asp-action="@(Model.IsEdit ? "EditAdmin" : "CreateAdmin")" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
+
+        <div class="mb-3">
+            <label asp-for="FirstName" class="form-label"></label>
+            <input asp-for="FirstName" class="form-control" />
+            <span asp-validation-for="FirstName" class="text-danger small"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="LastName" class="form-label"></label>
+            <input asp-for="LastName" class="form-control" />
+            <span asp-validation-for="LastName" class="text-danger small"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger small"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Password" class="form-label"></label>
+            <input asp-for="Password" class="form-control" autocomplete="new-password" />
+            @if (Model.IsEdit)
+            {
+                <div class="form-text">Leer lassen, um das aktuelle Passwort beizubehalten.</div>
+            }
+            <span asp-validation-for="Password" class="text-danger small"></span>
+        </div>
+
+        <button type="submit" class="btn btn-wgbs-dark">Speichern</button>
+        <a class="btn btn-outline-secondary" asp-controller="Admin" asp-action="ManageAdmins">Abbrechen</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,59 @@
+@model StudentSelectionViewModel
+@{
+    ViewData["Title"] = "Meine Auswahl";
+    ViewData["ActiveNav"] = "MySelection";
+    Layout = "_StudentLayout";
+}
+
+<h1>Meine Auswahl</h1>
+
+@if (Model.CurrentSelections.Count == 0)
+{
+    <div class="wgbs-card">
+        Sie haben noch keine Präsentationen ausgewählt.
+        <a asp-controller="Student" asp-action="Presentations">Jetzt auswählen</a>.
+    </div>
+}
+
+@foreach (var item in Model.CurrentSelections)
+{
+    <div class="presentation-row">
+        <div class="col-field">
+            <div class="label">Thema</div>
+            <div class="value">@item.Topic</div>
+        </div>
+        <div class="col-field">
+            <div class="label">Datum</div>
+            <div class="value">@item.StartsAt.ToString("dd.MM.yyyy")</div>
+        </div>
+        <div class="col-field">
+            <div class="label">Uhrzeit</div>
+            <div class="value">@item.StartsAt.ToString("HH:mm") Uhr</div>
+        </div>
+        <div class="col-field">
+            <div class="label">Raum</div>
+            <div class="value">@item.RoomName</div>
+        </div>
+        <div class="col-field">
+            <div class="label">Freie Plätze</div>
+            <div class="value">max. @item.MaxObservers Plätze</div>
+        </div>
+        <div class="col-field">
+            <span class="badge-status badge-selected">✓ AUSGEWÄHLT</span>
+        </div>
+        <div class="col-action">
+            <form asp-controller="Student" asp-action="RemoveSelection" method="post" class="m-0">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="registrationId" value="@item.Id" />
+                <button type="submit" class="btn btn-outline-secondary btn-sm">Entfernen</button>
+            </form>
+        </div>
+    </div>
+}
+
+@if (Model.HasCompletedSelection)
+{
+    <div class="text-center mt-3">
+        <a class="btn btn-wgbs-dark" asp-controller="Student" asp-action="Confirm">Auswahl bestätigen</a>
+    </div>
+}

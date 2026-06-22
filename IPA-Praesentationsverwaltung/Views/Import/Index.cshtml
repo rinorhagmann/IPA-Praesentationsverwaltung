@@ -1,0 +1,47 @@
+@{
+    ViewData["Title"] = "Daten importieren";
+    ViewData["ActiveNav"] = "Import";
+    Layout = "_AdminLayout";
+}
+
+<h1>Daten importieren</h1>
+
+<div class="row g-4" style="max-width: 820px;">
+    <div class="col-md-6">
+        <div class="wgbs-card h-100">
+            <div class="dropzone">
+                <h2>G4-Präsentationen</h2>
+                <div class="subtitle">Import als CSV</div>
+                <form asp-controller="Import" asp-action="ImportPresentations" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <input type="file" name="CsvFile" accept=".csv" class="form-control mb-3" required />
+                    <button type="submit" class="btn btn-wgbs-dark">⭱ Upload</button>
+                </form>
+            </div>
+            <p class="text-muted small mt-3 mb-0">Spalten: Thema; Datum/Uhrzeit; Raum</p>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="wgbs-card h-100">
+            <div class="dropzone">
+                <h2>G3-Schüler/innen</h2>
+                <div class="subtitle">Import als CSV</div>
+                <form asp-controller="Import" asp-action="ImportStudents" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <input type="file" name="CsvFile" accept=".csv" class="form-control mb-3" required />
+                    <button type="submit" class="btn btn-wgbs-dark">⭱ Upload</button>
+                </form>
+            </div>
+            <p class="text-muted small mt-3 mb-0">Spalten: Vorname; Nachname; E-Mail</p>
+        </div>
+    </div>
+</div>
+
+<div class="wgbs-card mt-4 text-center" style="max-width: 820px;">
+    <h2 class="h5 mb-3">Initialpasswörter generiert</h2>
+    <form asp-controller="Import" asp-action="SendCredentials" method="post">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-wgbs-dark w-100">Zugangsdaten versenden</button>
+    </form>
+</div>

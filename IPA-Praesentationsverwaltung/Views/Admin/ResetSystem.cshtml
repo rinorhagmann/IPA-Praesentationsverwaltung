@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "System zurücksetzen";
+    ViewData["ActiveNav"] = "Reset";
+    Layout = "_AdminLayout";
+}
+
+<h1>System zurücksetzen</h1>
+
+<div class="wgbs-card danger-card" style="max-width: 720px; margin: 0 auto;">
+    <div class="danger-title mb-2">ACHTUNG!</div>
+    <p class="mb-3">
+        Hiermit werden alle Präsentationen, sowie Schülerdaten und Eintragungen
+        <u>unwiderruflich gelöscht!</u>
+    </p>
+
+    <form asp-controller="Admin" asp-action="ResetSystem" method="post"
+          onsubmit="return confirm('Sind Sie sicher? Diese Aktion kann nicht rückgängig gemacht werden.');">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="confirmed" value="true" />
+        <button type="submit" class="btn btn-wgbs-danger w-100">🗑 SYSTEM ZURÜCKSETZEN</button>
+    </form>
+</div>

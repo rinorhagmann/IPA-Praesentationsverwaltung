@@ -11,7 +11,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Container tooling for Visual Studio / Docker -->
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+
+    <!-- Entity Framework Core with the Microsoft SQL Server provider -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <!-- Note: Microsoft.AspNetCore.Cryptography.KeyDerivation (used by the PBKDF2
+         password hasher) ships with the ASP.NET Core shared framework, so no
+         explicit package reference is required. -->
   </ItemGroup>
 
 </Project>

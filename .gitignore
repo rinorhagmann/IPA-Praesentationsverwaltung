@@ -55,3 +55,8 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 .DS_Store
+
+# --- Laufzeit-Daten (z. B. abgelegte Entwicklungs-E-Mails) ---
+**/App_Data/
+
+temp/

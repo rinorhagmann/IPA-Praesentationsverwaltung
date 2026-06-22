@@ -1,0 +1,42 @@
+@{
+    string? active = ViewData["ActiveNav"] as string;
+}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Präsentationsverwaltung WGBS</title>
+    <link rel="icon" type="image/png" href="~/images/wgbs.png" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="student-topbar">
+        <div class="page-shell d-flex align-items-center justify-content-between" style="padding-top:0;padding-bottom:0;">
+            <a asp-controller="Student" asp-action="Presentations">
+                <img class="logo" src="~/images/wgbs.png" alt="Wirtschaftsgymnasium Basel" />
+            </a>
+            <nav class="d-flex align-items-center gap-2">
+                <a class="nav-link @(active == "MySelection" ? "active" : null)"
+                   asp-controller="Student" asp-action="MySelection">Meine Auswahl</a>
+                <a class="nav-link @(active == "Presentations" ? "active" : null)"
+                   asp-controller="Student" asp-action="Presentations">Präsentationen</a>
+                <form asp-controller="Auth" asp-action="Logout" method="post" class="m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-wgbs-danger btn-sm">Logout</button>
+                </form>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <partial name="_Alerts" />
+        @RenderBody()
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

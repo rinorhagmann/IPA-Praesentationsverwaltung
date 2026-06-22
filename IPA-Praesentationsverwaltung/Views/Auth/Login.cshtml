@@ -1,0 +1,26 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "_AuthLayout";
+}
+
+<div class="auth-card">
+    <img class="logo" src="~/images/wgbs.png" alt="Wirtschaftsgymnasium Basel" />
+    <h1>Login</h1>
+
+    <form asp-controller="Auth" asp-action="Login" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="ReturnUrl" />
+
+        <div asp-validation-summary="All" class="text-danger small mb-2"></div>
+
+        <input asp-for="Email" class="form-control" placeholder="E-Mail Adresse" autocomplete="username" autofocus />
+        <input asp-for="Password" class="form-control" placeholder="Passwort" autocomplete="current-password" />
+
+        <button type="submit" class="btn btn-wgbs-dark w-100 mt-2">Anmelden</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

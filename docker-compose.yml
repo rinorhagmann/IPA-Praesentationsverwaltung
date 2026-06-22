@@ -1,7 +1,5 @@
-version: '3.8'
-
 services:
-  # 1. Deine ASP.NET Core Web-App (C# MVC)
+  # 1. ASP.NET Core Web-App (C# MVC)
   ipa-praesentationsverwaltung:
     image: ${DOCKER_REGISTRY-}ipapraesentationsverwaltung
     build:
@@ -14,10 +12,13 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+      # The app reaches the SQL container via the compose service name "sql-db".
+      - ConnectionStrings__DefaultConnection=Server=sql-db,1433;Database=IPADatabase;User Id=sa;Password=MeinSicheresPasswort123!;TrustServerCertificate=True;Encrypt=False;
     depends_on:
-      - sql-db
+      sql-db:
+        condition: service_healthy
 
-  # 2. Deine lokale MSSQL Datenbankinstanz (wie im Detailsbeschrieb gefordert)
+  # 2. Lokale MSSQL Datenbankinstanz (wie im Detailbeschrieb gefordert)
   sql-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: mssql-db-container
@@ -28,6 +29,13 @@ services:
       - MSSQL_SA_PASSWORD=MeinSicheresPasswort123! # Ändere dies bei Bedarf (starkes Passwort!)
     volumes:
       - mssql-data:/var/opt/mssql
+    # Health check so the web app only starts once SQL Server accepts connections.
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q \"SELECT 1\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
 volumes:
   mssql-data:

@@ -1,0 +1,40 @@
+@model IReadOnlyList<Admin>
+@{
+    ViewData["Title"] = "Admin-Logins";
+    ViewData["ActiveNav"] = "Admins";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="m-0">Admin-Logins</h1>
+    <a class="btn btn-wgbs-dark" asp-controller="Admin" asp-action="CreateAdmin">Neuer Login</a>
+</div>
+
+<div class="table-card">
+    <table class="table align-middle m-0">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>E-Mail</th>
+                <th class="text-end">Aktionen</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var admin in Model)
+            {
+                <tr>
+                    <td>@admin.GetFullName()</td>
+                    <td>@admin.Email</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-secondary" asp-controller="Admin" asp-action="EditAdmin" asp-route-id="@admin.Id">Bearbeiten</a>
+                        <form asp-controller="Admin" asp-action="DeleteAdmin" asp-route-id="@admin.Id" method="post"
+                              class="d-inline" onsubmit="return confirm('Diesen Login löschen?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-wgbs-danger">Löschen</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

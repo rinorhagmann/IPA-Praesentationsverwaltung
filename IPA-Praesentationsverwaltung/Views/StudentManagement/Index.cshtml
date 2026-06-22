@@ -1,0 +1,51 @@
+@model IReadOnlyList<Student>
+@{
+    ViewData["Title"] = "Schüler/innen verwalten";
+    ViewData["ActiveNav"] = "Students";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="m-0">Schüler/innen</h1>
+    <a class="btn btn-wgbs-dark" asp-controller="StudentManagement" asp-action="Create">Neue/r Schüler/in</a>
+</div>
+
+<div class="table-card">
+    <table class="table align-middle m-0">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>E-Mail</th>
+                <th>Zugangsdaten</th>
+                <th class="text-end">Aktionen</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model)
+            {
+                <tr>
+                    <td>@student.GetFullName()</td>
+                    <td>@student.Email</td>
+                    <td>
+                        @if (student.InitialPasswordSent)
+                        {
+                            <span class="badge-status badge-free">versendet</span>
+                        }
+                        else
+                        {
+                            <span class="badge-status badge-full">ausstehend</span>
+                        }
+                    </td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-secondary" asp-controller="StudentManagement" asp-action="Edit" asp-route-id="@student.Id">Bearbeiten</a>
+                        <form asp-controller="StudentManagement" asp-action="Delete" asp-route-id="@student.Id" method="post"
+                              class="d-inline" onsubmit="return confirm('Diese/n Schüler/in löschen?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-wgbs-danger">Löschen</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

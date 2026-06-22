@@ -1,0 +1,39 @@
+@model StudentSelectionViewModel
+@{
+    ViewData["Title"] = "Ihre Auswahl";
+    ViewData["ActiveNav"] = "MySelection";
+    Layout = "_StudentLayout";
+}
+
+<h1>Ihre Auswahl</h1>
+<p class="text-muted">Bitte überprüfen Sie Ihre Auswahl und bestätigen Sie sie.</p>
+
+@foreach (var item in Model.CurrentSelections)
+{
+    <div class="presentation-row">
+        <div class="col-field">
+            <div class="label">Thema</div>
+            <div class="value">@item.Topic</div>
+        </div>
+        <div class="col-field">
+            <div class="label">Datum</div>
+            <div class="value">@item.StartsAt.ToString("dd.MM.yyyy")</div>
+        </div>
+        <div class="col-field">
+            <div class="label">Uhrzeit</div>
+            <div class="value">@item.StartsAt.ToString("HH:mm") Uhr</div>
+        </div>
+        <div class="col-field">
+            <div class="label">Raum</div>
+            <div class="value">@item.RoomName</div>
+        </div>
+        <div class="col-field">
+            <span class="badge-status badge-selected">✓ AUSGEWÄHLT</span>
+        </div>
+    </div>
+}
+
+<form asp-controller="Student" asp-action="ConfirmSelection" method="post" class="mt-2">
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-wgbs-dark w-100">Auswahl bestätigen</button>
+</form>

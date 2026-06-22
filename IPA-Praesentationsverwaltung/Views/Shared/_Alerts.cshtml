@@ -1,0 +1,9 @@
+@* Renders flash messages stored in TempData by the controllers. *@
+@if (TempData["Success"] is string success && !string.IsNullOrWhiteSpace(success))
+{
+    <div class="alert alert-success" role="alert">@success</div>
+}
+@if (TempData["Error"] is string error && !string.IsNullOrWhiteSpace(error))
+{
+    <div class="alert alert-danger" role="alert" style="white-space: pre-line;">@error</div>
+}

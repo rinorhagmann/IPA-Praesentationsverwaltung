@@ -1,0 +1,44 @@
+@model IReadOnlyList<Presentation>
+@{
+    ViewData["Title"] = "Präsentationen verwalten";
+    ViewData["ActiveNav"] = "Presentations";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="m-0">Präsentationen</h1>
+    <a class="btn btn-wgbs-dark" asp-controller="Presentation" asp-action="Create">Neue Präsentation</a>
+</div>
+
+<div class="table-card">
+    <table class="table align-middle m-0">
+        <thead>
+            <tr>
+                <th>Thema</th>
+                <th>Datum / Uhrzeit</th>
+                <th>Raum</th>
+                <th>Zuseher</th>
+                <th class="text-end">Aktionen</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Topic</td>
+                    <td>@p.StartsAt.ToString("dd.MM.yyyy HH:mm") Uhr</td>
+                    <td>@p.Room?.Name</td>
+                    <td>@p.Registrations.Count / @p.MaxObservers</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-secondary" asp-controller="Presentation" asp-action="Edit" asp-route-id="@p.Id">Bearbeiten</a>
+                        <form asp-controller="Presentation" asp-action="Delete" asp-route-id="@p.Id" method="post"
+                              class="d-inline" onsubmit="return confirm('Diese Präsentation löschen?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-wgbs-danger">Löschen</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

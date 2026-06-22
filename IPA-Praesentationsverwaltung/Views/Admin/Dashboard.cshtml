@@ -1,0 +1,49 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["ActiveNav"] = "Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<h1>Administrations-Dashboard</h1>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div>
+            <div class="stat-label">Angemeldete SuS</div>
+            <div class="stat-value">@Model.StudentsWithCompleteSelection/@Model.TotalStudents</div>
+        </div>
+        <div class="stat-icon">👥</div>
+    </div>
+
+    <div class="stat-card">
+        <div>
+            <div class="stat-label">Präsentationen</div>
+            <div class="stat-value">@Model.TotalPresentations</div>
+        </div>
+        <div class="stat-icon">📄</div>
+    </div>
+
+    <div class="stat-card">
+        <div>
+            <div class="stat-label">Ausstehende Eintragungen</div>
+            <div class="stat-value">@Model.PendingRegistrations</div>
+        </div>
+        <div class="stat-icon">⚠</div>
+    </div>
+
+    <div class="stat-card">
+        <div>
+            <div class="stat-label">Potenzielle Konflikte</div>
+            <div class="stat-value">@Model.PotentialConflicts</div>
+        </div>
+        <div class="stat-icon">⊘</div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <form asp-controller="Admin" asp-action="SendConfirmations" method="post" class="d-inline">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-wgbs-dark">Bestätigungen an alle versenden</button>
+    </form>
+</div>

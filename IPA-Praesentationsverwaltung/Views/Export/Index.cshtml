@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Daten exportieren";
+    ViewData["ActiveNav"] = "Export";
+    Layout = "_AdminLayout";
+}
+
+<h1>Daten exportieren</h1>
+
+<div class="row g-4" style="max-width: 820px;">
+    <div class="col-md-6">
+        <div class="wgbs-card h-100">
+            <div class="dropzone">
+                <h2>Raumlisten</h2>
+                <div class="subtitle">Export als CSV oder PDF</div>
+                <a class="btn btn-wgbs-dark w-100 mb-2" asp-controller="Export" asp-action="PrintRooms" target="_blank">🖶 Druckansicht</a>
+                <a class="btn btn-wgbs-dark w-100 mb-2" asp-controller="Export" asp-action="RoomsPdf">⭳ PDF exportieren</a>
+                <a class="btn btn-wgbs-dark w-100" asp-controller="Export" asp-action="RoomsCsv">⭳ CSV exportieren</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="wgbs-card h-100">
+            <div class="dropzone">
+                <h2>Zuseherlisten</h2>
+                <div class="subtitle">Export als CSV oder PDF</div>
+                <a class="btn btn-wgbs-dark w-100 mb-2" asp-controller="Export" asp-action="PrintObservers" target="_blank">🖶 Druckansicht</a>
+                <a class="btn btn-wgbs-dark w-100 mb-2" asp-controller="Export" asp-action="ObserversPdf">⭳ PDF exportieren</a>
+                <a class="btn btn-wgbs-dark w-100" asp-controller="Export" asp-action="ObserversCsv">⭳ CSV exportieren</a>
+            </div>
+        </div>
+    </div>
+</div>

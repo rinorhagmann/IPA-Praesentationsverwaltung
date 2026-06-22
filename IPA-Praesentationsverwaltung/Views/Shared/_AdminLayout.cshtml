@@ -1,0 +1,49 @@
+@{
+    string? active = ViewData["ActiveNav"] as string;
+    string NavClass(string key) => active == key ? "nav-link active" : "nav-link";
+}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Administration WGBS</title>
+    <link rel="icon" type="image/png" href="~/images/wgbs.png" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="admin-shell">
+        <aside class="admin-sidebar">
+            <img class="logo" src="~/images/wgbs.png" alt="Wirtschaftsgymnasium Basel" />
+
+            <a class="@NavClass("Dashboard")" asp-controller="Admin" asp-action="Dashboard">▣ Dashboard</a>
+            <a class="@NavClass("Import")" asp-controller="Import" asp-action="Index">⭳ Daten importieren</a>
+            <a class="@NavClass("Export")" asp-controller="Export" asp-action="Index">⭱ Daten exportieren</a>
+            <a class="@NavClass("Reset")" asp-controller="Admin" asp-action="ResetSystem">⟳ System zurücksetzen</a>
+
+            <div class="sidebar-section">Verwaltung</div>
+            <a class="@NavClass("Presentations")" asp-controller="Presentation" asp-action="Index">Präsentationen</a>
+            <a class="@NavClass("Students")" asp-controller="StudentManagement" asp-action="Index">Schüler/innen</a>
+            <a class="@NavClass("Registrations")" asp-controller="Registration" asp-action="Index">Eintragungen</a>
+            <a class="@NavClass("Admins")" asp-controller="Admin" asp-action="ManageAdmins">Admin-Logins</a>
+
+            <div class="sidebar-footer">
+                <form asp-controller="Auth" asp-action="Logout" method="post" class="m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start">⏻ Logout</button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="admin-content">
+            <partial name="_Alerts" />
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

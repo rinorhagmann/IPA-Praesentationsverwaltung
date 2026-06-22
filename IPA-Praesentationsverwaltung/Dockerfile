@@ -12,6 +12,8 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+# Copy the NuGet configuration first so restore uses only the public gallery.
+COPY ["nuget.config", "./"]
 COPY ["IPA-Praesentationsverwaltung/IPA-Praesentationsverwaltung.csproj", "IPA-Praesentationsverwaltung/"]
 RUN dotnet restore "./IPA-Praesentationsverwaltung/IPA-Praesentationsverwaltung.csproj"
 COPY . .

@@ -1,0 +1,44 @@
+@model PresentationFormViewModel
+@{
+    ViewData["Title"] = Model.IsEdit ? "Präsentation bearbeiten" : "Präsentation erstellen";
+    ViewData["ActiveNav"] = "Presentations";
+    Layout = "_AdminLayout";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="wgbs-card" style="max-width: 520px;">
+    <form asp-controller="Presentation" asp-action="@(Model.IsEdit ? "Edit" : "Create")" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
+
+        <div class="mb-3">
+            <label asp-for="Topic" class="form-label"></label>
+            <input asp-for="Topic" class="form-control" />
+            <span asp-validation-for="Topic" class="text-danger small"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="StartsAt" class="form-label"></label>
+            <input asp-for="StartsAt" type="datetime-local" class="form-control" />
+            <span asp-validation-for="StartsAt" class="text-danger small"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="RoomName" class="form-label"></label>
+            <input asp-for="RoomName" class="form-control" />
+            <span asp-validation-for="RoomName" class="text-danger small"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="MaxObservers" class="form-label"></label>
+            <input asp-for="MaxObservers" type="number" min="1" max="100" class="form-control" />
+            <span asp-validation-for="MaxObservers" class="text-danger small"></span>
+        </div>
+
+        <button type="submit" class="btn btn-wgbs-dark">Speichern</button>
+        <a class="btn btn-outline-secondary" asp-controller="Presentation" asp-action="Index">Abbrechen</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

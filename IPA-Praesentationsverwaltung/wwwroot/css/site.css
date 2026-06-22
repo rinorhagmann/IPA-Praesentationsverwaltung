@@ -1,31 +1,399 @@
-html {
-  font-size: 14px;
+/* ===========================================================================
+   Wirtschaftsgymnasium Basel – Präsentationsverwaltung
+   Colour profile derived from the school logo (blue / grey / black).
+   =========================================================================== */
+
+:root {
+    --wgbs-blue: #16389c;
+    --wgbs-blue-dark: #0f2a78;
+    --wgbs-grey: #9b9b9b;
+    --wgbs-dark: #1f2430;
+    --wgbs-dark-hover: #313846;
+    --wgbs-red: #e23b3b;
+    --wgbs-red-hover: #c92f2f;
+    --wgbs-green: #1faa6a;
+    --page-bg: #ececec;
+    --card-bg: #ffffff;
+    --text-muted: #6b7280;
+    --border-soft: #e5e7eb;
+    --radius: 16px;
+    --shadow-soft: 0 6px 20px rgba(0, 0, 0, 0.06);
 }
 
-@media (min-width: 768px) {
-  html {
+html {
     font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0;
+    background-color: var(--page-bg);
+    color: var(--wgbs-dark);
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+    min-height: 100vh;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+a {
+    color: var(--wgbs-blue);
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.btn:focus, .btn:active:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(22, 56, 156, 0.25);
+}
+
+/* ----- Generic buttons ---------------------------------------------------- */
+.btn-wgbs-dark {
+    background-color: var(--wgbs-dark);
+    border-color: var(--wgbs-dark);
+    color: #fff;
+}
+
+.btn-wgbs-dark:hover,
+.btn-wgbs-dark:focus {
+    background-color: var(--wgbs-dark-hover);
+    border-color: var(--wgbs-dark-hover);
+    color: #fff;
+}
+
+.btn-wgbs-danger {
+    background-color: var(--wgbs-red);
+    border-color: var(--wgbs-red);
+    color: #fff;
+}
+
+.btn-wgbs-danger:hover,
+.btn-wgbs-danger:focus {
+    background-color: var(--wgbs-red-hover);
+    border-color: var(--wgbs-red-hover);
+    color: #fff;
+}
+
+.btn:disabled,
+.btn.disabled {
+    opacity: 0.5;
+}
+
+/* ----- Cards -------------------------------------------------------------- */
+.wgbs-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    padding: 1.5rem;
+}
+
+/* ----- Status badges ------------------------------------------------------ */
+.badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-free {
+    background: rgba(31, 170, 106, 0.15);
+    color: var(--wgbs-green);
+}
+
+.badge-full {
+    background: rgba(226, 59, 59, 0.15);
+    color: var(--wgbs-red);
+}
+
+.badge-selected {
+    background: var(--wgbs-green);
+    color: #fff;
+}
+
+/* =====================  Auth layout (login / success)  ==================== */
+.auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 360px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    padding: 2.25rem 2rem;
+    text-align: center;
+}
+
+.auth-card .logo {
+    height: 56px;
+    margin-bottom: 1rem;
+}
+
+.auth-card h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+}
+
+.auth-card .form-control {
+    margin-bottom: 0.85rem;
+    padding: 0.7rem 0.9rem;
+}
+
+.success-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 4px solid var(--wgbs-green);
+    color: var(--wgbs-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 2rem;
+}
+
+/* =====================  Student top navigation  =========================== */
+.student-topbar {
+    background: #fff;
+    border-bottom: 1px solid var(--border-soft);
+    padding: 0.75rem 0;
+}
+
+.student-topbar .logo {
+    height: 34px;
+}
+
+.student-topbar .nav-link {
+    color: var(--wgbs-dark);
+    font-size: 0.95rem;
+    padding: 0.25rem 0.75rem;
+}
+
+.student-topbar .nav-link.active {
+    font-weight: 600;
+}
+
+.page-shell {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem;
+}
+
+.page-shell h1 {
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+}
+
+/* ----- Presentation row cards -------------------------------------------- */
+.presentation-row {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    padding: 1.1rem 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.presentation-row .col-field {
+    flex: 1 1 90px;
+    min-width: 80px;
+}
+
+.presentation-row .col-field .label {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.presentation-row .col-field .value {
+    color: #374151;
+    font-size: 0.9rem;
+}
+
+.presentation-row .col-action {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+.presentation-row .col-action .btn {
+    min-width: 150px;
+}
+
+/* =====================  Admin sidebar layout  ============================= */
+.admin-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    width: 240px;
+    background: #fff;
+    border-right: 1px solid var(--border-soft);
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 0.75rem;
+    flex-shrink: 0;
+}
+
+.admin-sidebar .logo {
+    height: 40px;
+    margin: 0.25rem 0.75rem 1.75rem;
+}
+
+.admin-sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #374151;
+    border-radius: 10px;
+    padding: 0.6rem 0.85rem;
+    margin-bottom: 0.2rem;
+    font-size: 0.92rem;
+}
+
+.admin-sidebar .nav-link:hover {
+    background: #f3f4f6;
+}
+
+.admin-sidebar .nav-link.active {
+    background: rgba(22, 56, 156, 0.1);
+    color: var(--wgbs-blue);
+    font-weight: 600;
+}
+
+.admin-sidebar .sidebar-section {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--wgbs-grey);
+    margin: 1rem 0.85rem 0.4rem;
+}
+
+.admin-sidebar .sidebar-footer {
+    margin-top: auto;
+}
+
+.admin-content {
+    flex: 1;
+    padding: 2.5rem 3rem;
+    background: var(--page-bg);
+}
+
+.admin-content h1 {
+    font-weight: 800;
+    margin-bottom: 2rem;
+}
+
+/* ----- Dashboard stat cards ---------------------------------------------- */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    max-width: 760px;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    padding: 1.5rem 1.75rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.stat-card .stat-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card .stat-value {
+    font-size: 2.4rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.stat-card .stat-icon {
+    font-size: 1.4rem;
+    color: var(--wgbs-grey);
+}
+
+/* ----- Import / export dashed cards -------------------------------------- */
+.dropzone {
+    border: 2px dashed var(--wgbs-blue);
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+}
+
+.dropzone h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.1rem;
+}
+
+.dropzone .subtitle {
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 1.25rem;
+    font-size: 0.9rem;
+}
+
+.danger-card {
+    text-align: center;
+}
+
+.danger-card .danger-title {
+    color: var(--wgbs-red);
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+/* ----- Tables ------------------------------------------------------------- */
+.table-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    padding: 1.25rem 1.5rem;
+}
+
+/* ----- Print view --------------------------------------------------------- */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background: #fff;
+    }
+}
+
+@media (max-width: 768px) {
+    .stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-shell {
+        flex-direction: column;
+    }
+
+    .admin-sidebar {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .admin-sidebar .sidebar-footer {
+        margin-top: 0;
+        margin-left: auto;
+    }
+
+    .presentation-row .col-action {
+        margin-left: 0;
+    }
 }

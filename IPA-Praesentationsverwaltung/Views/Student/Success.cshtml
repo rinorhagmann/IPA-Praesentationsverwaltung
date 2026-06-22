@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "Erfolgreich angemeldet";
+    Layout = "_AuthLayout";
+}
+
+<div class="auth-card">
+    <div class="success-icon">✓</div>
+    <h1>Erfolgreich angemeldet!</h1>
+    <p class="text-muted">
+        Eine Bestätigungsmail mit den Details wurde an Ihre E-Mail Adresse versendet.
+    </p>
+
+    <a class="btn btn-wgbs-dark w-100 mb-2" asp-controller="Student" asp-action="Presentations">
+        Zu den Präsentationen
+    </a>
+    <form asp-controller="Auth" asp-action="Logout" method="post" class="m-0">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-wgbs-danger w-100">Abmelden</button>
+    </form>
+</div>

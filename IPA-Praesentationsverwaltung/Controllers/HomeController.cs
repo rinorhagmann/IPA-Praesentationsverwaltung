@@ -1,25 +1,31 @@
+using System.Diagnostics;
+using IPA_Praesentationsverwaltung.Infrastructure;
 using IPA_Praesentationsverwaltung.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
-namespace IPA_Praesentationsverwaltung.Controllers
+namespace IPA_Praesentationsverwaltung.Controllers;
+
+/// <summary>
+/// Entry point that routes visitors to the correct start page depending on
+/// whether and how they are authenticated.
+/// </summary>
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    public IActionResult Index()
     {
-        public IActionResult Index()
+        if (User.Identity?.IsAuthenticated != true)
         {
-            return View();
+            return RedirectToAction("Login", "Auth");
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        return User.IsInRole(RoleNames.Admin)
+            ? RedirectToAction("Dashboard", "Admin")
+            : RedirectToAction("Presentations", "Student");
+    }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
