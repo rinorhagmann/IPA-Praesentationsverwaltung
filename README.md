@@ -44,30 +44,29 @@ Healthcheck, wendet die EF-Core-Migrationen an und legt den Standard-Admin an.
 
 ## E-Mail-Versand (SMTP)
 
-Standardmässig (ohne SMTP-Konfiguration) werden E-Mails nur protokolliert und in
-einen Outbox-Ordner geschrieben (Entwicklungsmodus). Für den **echten Versand**
-muss ein SMTP-Server konfiguriert werden.
+### Testen (Standard) – Mailpit
+Beim `docker compose up` läuft automatisch ein **Mailpit**-Testserver. Die App
+sendet alle E-Mails dorthin – ohne echte Zugangsdaten und mit beliebigem
+Absender. Die abgefangenen E-Mails sind einsehbar unter:
 
-**Mit Docker:** `.env.example` nach `.env` kopieren und die SMTP-Zugangsdaten
-eintragen (die Datei ist gitignored und wird nicht ins Image eingebacken):
+- **http://localhost:8025**
+
+So lässt sich der komplette Versand-Flow (Zugangsdaten, Bestätigungen) testen,
+ohne dass eine Mail nach aussen geht.
+
+### Betrieb – echter Versand über den Schul-Server
+`.env.example` nach `.env` kopieren und die SMTP-Daten des Schul-Servers
+(`edubs` / Microsoft 365) eintragen; die Datei ist gitignored und wird nicht ins
+Image eingebacken:
 
 ```bash
-cp .env.example .env   # danach Werte ausfüllen
+cp .env.example .env   # Werte eintragen, danach:
 docker compose up --build
 ```
 
-**Lokal (ohne Docker):** Werte in `appsettings.Development.json` oder als
-User Secrets hinterlegen, z. B.:
-
-```bash
-dotnet user-secrets set "Email:Smtp:Host" "smtp.gmail.com"
-dotnet user-secrets set "Email:Smtp:User" "deine.adresse@gmail.com"
-dotnet user-secrets set "Email:Smtp:Password" "<App-Passwort>"
-dotnet user-secrets set "Email:From" "deine.adresse@gmail.com"
-```
-
-> Für Gmail wird ein **App-Passwort** benötigt (nicht das Konto-Passwort) und
-> `Email:From` muss mit `Email:Smtp:User` übereinstimmen.
+Sobald `SMTP_HOST` auf den echten Server zeigt, sendet die App real. Für
+Microsoft 365 muss der Schul-Tenant SMTP-AUTH erlauben und `SMTP_FROM` mit
+`SMTP_USER` übereinstimmen.
 
 ## Lokale Entwicklung (ohne Docker)
 
