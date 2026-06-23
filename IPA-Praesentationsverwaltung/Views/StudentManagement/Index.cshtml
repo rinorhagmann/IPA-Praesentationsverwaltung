@@ -18,7 +18,7 @@
     </div>
 
     <div class="table-card">
-        <table class="table align-middle m-0">
+        <table class="table align-middle m-0 table-stack">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -33,9 +33,9 @@
                     string credentialStatus = student.InitialPasswordSent ? "versendet" : "ausstehend";
                     string searchText = $"{student.GetFullName()} {student.Email} {credentialStatus}".ToLowerInvariant();
                     <tr class="js-row" data-search="@searchText">
-                        <td>@student.GetFullName()</td>
-                        <td>@student.Email</td>
-                        <td>
+                        <td data-label="Name">@student.GetFullName()</td>
+                        <td data-label="E-Mail">@student.Email</td>
+                        <td data-label="Zugangsdaten">
                             @if (student.InitialPasswordSent)
                             {
                                 <span class="badge-status badge-free">versendet</span>
@@ -45,7 +45,7 @@
                                 <span class="badge-status badge-full">ausstehend</span>
                             }
                         </td>
-                        <td class="text-end">
+                        <td class="text-end cell-actions">
                             <div class="row-actions">
                                 <a class="btn btn-sm btn-outline-secondary" asp-controller="StudentManagement" asp-action="Edit" asp-route-id="@student.Id">Bearbeiten</a>
                                 <form asp-controller="StudentManagement" asp-action="Delete" asp-route-id="@student.Id" method="post"

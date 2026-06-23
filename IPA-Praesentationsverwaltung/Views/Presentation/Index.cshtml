@@ -18,7 +18,7 @@
     </div>
 
     <div class="table-card">
-        <table class="table align-middle m-0">
+        <table class="table align-middle m-0 table-stack">
             <thead>
                 <tr>
                     <th>Thema</th>
@@ -34,11 +34,11 @@
                     string date = p.StartsAt.ToString("dd.MM.yyyy HH:mm");
                     string searchText = $"{p.Topic} {p.Room?.Name} {date}".ToLowerInvariant();
                     <tr class="js-row" data-search="@searchText">
-                        <td>@p.Topic</td>
-                        <td>@date Uhr</td>
-                        <td>@p.Room?.Name</td>
-                        <td>@p.Registrations.Count / @p.MaxObservers</td>
-                        <td class="text-end">
+                        <td data-label="Thema">@p.Topic</td>
+                        <td data-label="Datum / Uhrzeit">@date Uhr</td>
+                        <td data-label="Raum">@p.Room?.Name</td>
+                        <td data-label="Zuseher">@p.Registrations.Count / @p.MaxObservers</td>
+                        <td class="text-end cell-actions">
                             <div class="row-actions">
                                 <a class="btn btn-sm btn-outline-secondary" asp-controller="Presentation" asp-action="Edit" asp-route-id="@p.Id">Bearbeiten</a>
                                 <form asp-controller="Presentation" asp-action="Delete" asp-route-id="@p.Id" method="post"

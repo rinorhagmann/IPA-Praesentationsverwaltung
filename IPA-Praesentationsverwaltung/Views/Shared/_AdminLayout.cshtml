@@ -15,7 +15,19 @@
 </head>
 <body>
     <div class="admin-shell">
-        <aside class="admin-sidebar">
+        <header class="admin-mobile-topbar">
+            <button type="button" class="nav-toggle" data-nav-toggle="adminSidebar"
+                    aria-controls="adminSidebar" aria-expanded="false" aria-label="Menü öffnen">
+                <span class="nav-toggle-bar"></span>
+                <span class="nav-toggle-bar"></span>
+                <span class="nav-toggle-bar"></span>
+            </button>
+            <img class="logo" src="~/images/wgbs.png" alt="Wirtschaftsgymnasium Basel" />
+        </header>
+
+        <div class="admin-backdrop" data-nav-backdrop="adminSidebar"></div>
+
+        <aside class="admin-sidebar" id="adminSidebar">
             <img class="logo" src="~/images/wgbs.png" alt="Wirtschaftsgymnasium Basel" />
 
             <a class="@NavClass("Dashboard")" asp-controller="Admin" asp-action="Dashboard">▣ Dashboard</a>
@@ -45,6 +57,7 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/nav.js" asp-append-version="true"></script>
     <script src="~/js/search-paginate.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

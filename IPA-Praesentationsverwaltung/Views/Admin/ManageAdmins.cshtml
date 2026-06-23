@@ -13,7 +13,7 @@
 </div>
 
 <div class="table-card">
-    <table class="table align-middle m-0">
+    <table class="table align-middle m-0 table-stack">
         <thead>
             <tr>
                 <th>Name</th>
@@ -26,23 +26,25 @@
             {
                 bool isCurrentUser = currentUserId == admin.Id;
                 <tr>
-                    <td>@admin.GetFullName()</td>
-                    <td>@admin.Email</td>
-                    <td class="text-end">
-                        <a class="btn btn-sm btn-outline-secondary" asp-controller="Admin" asp-action="EditAdmin" asp-route-id="@admin.Id">Bearbeiten</a>
-                        @if (isCurrentUser)
-                        {
-                            <button type="button" class="btn btn-sm btn-wgbs-danger" disabled
-                                    title="Sie können Ihren eigenen Login nicht löschen.">Löschen</button>
-                        }
-                        else
-                        {
-                            <form asp-controller="Admin" asp-action="DeleteAdmin" asp-route-id="@admin.Id" method="post"
-                                  class="d-inline" onsubmit="return confirm('Diesen Login löschen?');">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-wgbs-danger">Löschen</button>
-                            </form>
-                        }
+                    <td data-label="Name">@admin.GetFullName()</td>
+                    <td data-label="E-Mail">@admin.Email</td>
+                    <td class="text-end cell-actions">
+                        <div class="row-actions">
+                            <a class="btn btn-sm btn-outline-secondary" asp-controller="Admin" asp-action="EditAdmin" asp-route-id="@admin.Id">Bearbeiten</a>
+                            @if (isCurrentUser)
+                            {
+                                <button type="button" class="btn btn-sm btn-wgbs-danger" disabled
+                                        title="Sie können Ihren eigenen Login nicht löschen.">Löschen</button>
+                            }
+                            else
+                            {
+                                <form asp-controller="Admin" asp-action="DeleteAdmin" asp-route-id="@admin.Id" method="post"
+                                      onsubmit="return confirm('Diesen Login löschen?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-wgbs-danger">Löschen</button>
+                                </form>
+                            }
+                        </div>
                     </td>
                 </tr>
             }

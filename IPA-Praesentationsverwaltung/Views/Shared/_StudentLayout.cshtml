@@ -18,7 +18,13 @@
             <a asp-controller="Student" asp-action="Presentations">
                 <img class="logo" src="~/images/wgbs.png" alt="Wirtschaftsgymnasium Basel" />
             </a>
-            <nav class="d-flex align-items-center gap-2">
+            <button type="button" class="nav-toggle" data-nav-toggle="studentNav"
+                    aria-controls="studentNav" aria-expanded="false" aria-label="Menü öffnen">
+                <span class="nav-toggle-bar"></span>
+                <span class="nav-toggle-bar"></span>
+                <span class="nav-toggle-bar"></span>
+            </button>
+            <nav id="studentNav" class="student-nav">
                 <a class="nav-link @(active == "MySelection" ? "active" : null)"
                    asp-controller="Student" asp-action="MySelection">Meine Auswahl</a>
                 <a class="nav-link @(active == "Presentations" ? "active" : null)"
@@ -38,6 +44,7 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/nav.js" asp-append-version="true"></script>
     <script src="~/js/search-paginate.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

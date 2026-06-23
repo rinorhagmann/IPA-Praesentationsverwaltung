@@ -18,7 +18,7 @@
     </div>
 
     <div class="table-card">
-        <table class="table align-middle m-0">
+        <table class="table align-middle m-0 table-stack">
             <thead>
                 <tr>
                     <th>Schüler/in</th>
@@ -36,11 +36,11 @@
                     string when = r.Presentation?.StartsAt.ToString("dd.MM.yyyy HH:mm") ?? string.Empty;
                     string searchText = $"{studentName} {topic} {when} {r.Student?.Email}".ToLowerInvariant();
                     <tr class="js-row" data-search="@searchText">
-                        <td>@studentName</td>
-                        <td>@topic</td>
-                        <td>@when Uhr</td>
-                        <td>@r.RegisteredAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
-                        <td class="text-end">
+                        <td data-label="Schüler/in">@studentName</td>
+                        <td data-label="Präsentation">@topic</td>
+                        <td data-label="Datum / Uhrzeit">@when Uhr</td>
+                        <td data-label="Eingetragen am">@r.RegisteredAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                        <td class="text-end cell-actions">
                             <div class="row-actions">
                                 <a class="btn btn-sm btn-outline-secondary" asp-controller="Registration" asp-action="Edit" asp-route-id="@r.Id">Bearbeiten</a>
                                 <form asp-controller="Registration" asp-action="Delete" asp-route-id="@r.Id" method="post"
