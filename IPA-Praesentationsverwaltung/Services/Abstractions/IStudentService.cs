@@ -36,4 +36,10 @@ public interface IStudentService
 
     /// <summary>Marks the student's credentials as delivered.</summary>
     Task MarkCredentialsSentAsync(int studentId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Stores that the student has irrevocably confirmed their selection. Idempotent:
+    /// the timestamp is not overwritten if it is already set.
+    /// </summary>
+    Task MarkSelectionConfirmedAsync(int studentId, CancellationToken cancellationToken = default);
 }

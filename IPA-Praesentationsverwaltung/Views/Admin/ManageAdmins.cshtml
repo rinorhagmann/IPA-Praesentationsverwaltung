@@ -1,8 +1,10 @@
+@using IPA_Praesentationsverwaltung.Infrastructure
 @model IReadOnlyList<Admin>
 @{
     ViewData["Title"] = "Admin-Logins";
     ViewData["ActiveNav"] = "Admins";
     Layout = "_AdminLayout";
+    int? currentUserId = User.GetUserId();
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -22,16 +24,25 @@
         <tbody>
             @foreach (var admin in Model)
             {
+                bool isCurrentUser = currentUserId == admin.Id;
                 <tr>
                     <td>@admin.GetFullName()</td>
                     <td>@admin.Email</td>
                     <td class="text-end">
                         <a class="btn btn-sm btn-outline-secondary" asp-controller="Admin" asp-action="EditAdmin" asp-route-id="@admin.Id">Bearbeiten</a>
-                        <form asp-controller="Admin" asp-action="DeleteAdmin" asp-route-id="@admin.Id" method="post"
-                              class="d-inline" onsubmit="return confirm('Diesen Login löschen?');">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-wgbs-danger">Löschen</button>
-                        </form>
+                        @if (isCurrentUser)
+                        {
+                            <button type="button" class="btn btn-sm btn-wgbs-danger" disabled
+                                    title="Sie können Ihren eigenen Login nicht löschen.">Löschen</button>
+                        }
+                        else
+                        {
+                            <form asp-controller="Admin" asp-action="DeleteAdmin" asp-route-id="@admin.Id" method="post"
+                                  class="d-inline" onsubmit="return confirm('Diesen Login löschen?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-wgbs-danger">Löschen</button>
+                            </form>
+                        }
                     </td>
                 </tr>
             }

@@ -18,15 +18,21 @@ public class RegistrationController : Controller
     private readonly IRegistrationService _registrationService;
     private readonly IStudentService _studentService;
     private readonly IPresentationService _presentationService;
+    private readonly INotificationService _notificationService;
+    private readonly ILogger<RegistrationController> _logger;
 
     public RegistrationController(
         IRegistrationService registrationService,
         IStudentService studentService,
-        IPresentationService presentationService)
+        IPresentationService presentationService,
+        INotificationService notificationService,
+        ILogger<RegistrationController> logger)
     {
         _registrationService = registrationService;
         _studentService = studentService;
         _presentationService = presentationService;
+        _notificationService = notificationService;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -57,6 +63,7 @@ public class RegistrationController : Controller
         try
         {
             await _registrationService.CreateRegistrationAsync(model.StudentId, model.PresentationId);
+            await NotifyStudentOfAdminChangeAsync(model.StudentId);
             TempData["Success"] = "Die Eintragung wurde erstellt.";
             return RedirectToAction(nameof(Index));
         }
@@ -97,7 +104,19 @@ public class RegistrationController : Controller
             return View("RegistrationForm", model);
         }
 
+        Registration? previous = await _registrationService.GetRegistrationByIdAsync(model.Id);
+        int? previousStudentId = previous?.StudentId;
+
         await _registrationService.UpdateRegistrationAsync(model.Id, model.StudentId, model.PresentationId);
+
+        // Notify the new owner; if the assignment moved between students, the
+        // previous owner is also informed because their selection just shrank.
+        await NotifyStudentOfAdminChangeAsync(model.StudentId);
+        if (previousStudentId.HasValue && previousStudentId.Value != model.StudentId)
+        {
+            await NotifyStudentOfAdminChangeAsync(previousStudentId.Value);
+        }
+
         TempData["Success"] = "Die Eintragung wurde aktualisiert.";
         return RedirectToAction(nameof(Index));
     }
@@ -106,9 +125,47 @@ public class RegistrationController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
+        Registration? registration = await _registrationService.GetRegistrationByIdAsync(id);
+        int? studentId = registration?.StudentId;
+
         await _registrationService.DeleteRegistrationAsync(id);
+
+        if (studentId.HasValue)
+        {
+            await NotifyStudentOfAdminChangeAsync(studentId.Value);
+        }
+
         TempData["Success"] = "Die Eintragung wurde gelöscht.";
         return RedirectToAction(nameof(Index));
+    }
+
+    // Loads the student together with their remaining registrations and sends a
+    // notification e-mail. Failures are logged but do not abort the admin flow.
+    private async Task NotifyStudentOfAdminChangeAsync(int studentId)
+    {
+        try
+        {
+            Student? student = await _studentService.GetStudentByIdAsync(studentId);
+            if (student is null)
+            {
+                return;
+            }
+
+            IReadOnlyList<Registration> registrations =
+                await _registrationService.GetRegistrationsByStudentAsync(studentId);
+
+            List<Presentation> presentations = registrations
+                .Where(r => r.Presentation is not null)
+                .Select(r => r.Presentation!)
+                .ToList();
+
+            await _notificationService.SendSelectionChangedByAdminAsync(student, presentations);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Failed to send selection-change notification to student {StudentId}.", studentId);
+        }
     }
 
     // Fills the student and presentation drop-downs for the form.

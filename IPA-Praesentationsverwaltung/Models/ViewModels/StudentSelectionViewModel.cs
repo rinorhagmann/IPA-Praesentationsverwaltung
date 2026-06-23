@@ -22,4 +22,7 @@ public class StudentSelectionViewModel
     public int RemainingSelections { get; init; }
 
     public bool HasCompletedSelection => RemainingSelections <= 0;
+
+    /// <summary>True after the student has irrevocably confirmed their selection.</summary>
+    public bool IsSelectionConfirmed { get; init; }
 }

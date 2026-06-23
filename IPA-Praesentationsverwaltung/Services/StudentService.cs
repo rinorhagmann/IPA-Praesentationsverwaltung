@@ -118,4 +118,18 @@ public sealed class StudentService : IStudentService
         student.InitialPasswordSent = true;
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task MarkSelectionConfirmedAsync(int studentId, CancellationToken cancellationToken = default)
+    {
+        Student student = await _dbContext.Students.FirstOrDefaultAsync(s => s.Id == studentId, cancellationToken)
+            ?? throw new InvalidOperationException($"Student {studentId} was not found.");
+
+        if (student.SelectionConfirmedAt.HasValue)
+        {
+            return;
+        }
+
+        student.SelectionConfirmedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
 }

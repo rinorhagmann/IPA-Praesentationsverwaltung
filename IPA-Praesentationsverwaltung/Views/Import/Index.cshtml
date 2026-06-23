@@ -9,30 +9,36 @@
 <div class="row g-4" style="max-width: 820px;">
     <div class="col-md-6">
         <div class="wgbs-card h-100">
-            <div class="dropzone">
-                <h2>G4-Präsentationen</h2>
-                <div class="subtitle">Import als CSV</div>
-                <form asp-controller="Import" asp-action="ImportPresentations" method="post" enctype="multipart/form-data">
-                    @Html.AntiForgeryToken()
-                    <input type="file" name="CsvFile" accept=".csv" class="form-control mb-3" required />
-                    <button type="submit" class="btn btn-wgbs-dark">⭱ Upload</button>
-                </form>
-            </div>
+            <form asp-controller="Import" asp-action="ImportPresentations" method="post"
+                  enctype="multipart/form-data" class="csv-upload-form">
+                @Html.AntiForgeryToken()
+                <div class="dropzone csv-dropzone" data-input="presentationsCsv">
+                    <h2>G4-Präsentationen</h2>
+                    <div class="subtitle">Import als CSV</div>
+                    <div class="dropzone-hint">CSV-Datei hierher ziehen oder klicken</div>
+                    <div class="dropzone-filename text-muted small mt-2"></div>
+                    <input id="presentationsCsv" type="file" name="CsvFile" accept=".csv" class="d-none" required />
+                    <button type="submit" class="btn btn-wgbs-dark mt-3 csv-upload-btn d-none">⭱ Upload</button>
+                </div>
+            </form>
             <p class="text-muted small mt-3 mb-0">Spalten: Thema; Datum/Uhrzeit; Raum</p>
         </div>
     </div>
 
     <div class="col-md-6">
         <div class="wgbs-card h-100">
-            <div class="dropzone">
-                <h2>G3-Schüler/innen</h2>
-                <div class="subtitle">Import als CSV</div>
-                <form asp-controller="Import" asp-action="ImportStudents" method="post" enctype="multipart/form-data">
-                    @Html.AntiForgeryToken()
-                    <input type="file" name="CsvFile" accept=".csv" class="form-control mb-3" required />
-                    <button type="submit" class="btn btn-wgbs-dark">⭱ Upload</button>
-                </form>
-            </div>
+            <form asp-controller="Import" asp-action="ImportStudents" method="post"
+                  enctype="multipart/form-data" class="csv-upload-form">
+                @Html.AntiForgeryToken()
+                <div class="dropzone csv-dropzone" data-input="studentsCsv">
+                    <h2>G3-Schüler/innen</h2>
+                    <div class="subtitle">Import als CSV</div>
+                    <div class="dropzone-hint">CSV-Datei hierher ziehen oder klicken</div>
+                    <div class="dropzone-filename text-muted small mt-2"></div>
+                    <input id="studentsCsv" type="file" name="CsvFile" accept=".csv" class="d-none" required />
+                    <button type="submit" class="btn btn-wgbs-dark mt-3 csv-upload-btn d-none">⭱ Upload</button>
+                </div>
+            </form>
             <p class="text-muted small mt-3 mb-0">Spalten: Vorname; Nachname; E-Mail</p>
         </div>
     </div>
@@ -45,3 +51,72 @@
         <button type="submit" class="btn btn-wgbs-dark w-100">Zugangsdaten versenden</button>
     </form>
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            document.querySelectorAll('.csv-dropzone').forEach(function (zone) {
+                var input = zone.querySelector('input[type=file]');
+                var button = zone.querySelector('.csv-upload-btn');
+                var filename = zone.querySelector('.dropzone-filename');
+
+                function isCsv(file) {
+                    if (!file) return false;
+                    var name = (file.name || '').toLowerCase();
+                    return name.endsWith('.csv');
+                }
+
+                function applySelection(file) {
+                    if (file && isCsv(file)) {
+                        filename.textContent = file.name;
+                        button.classList.remove('d-none');
+                        zone.classList.remove('is-invalid');
+                    } else {
+                        filename.textContent = file ? 'Nur CSV-Dateien sind zulässig.' : '';
+                        button.classList.add('d-none');
+                        zone.classList.toggle('is-invalid', !!file);
+                    }
+                }
+
+                zone.addEventListener('click', function (e) {
+                    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+                    input.click();
+                });
+
+                input.addEventListener('change', function () {
+                    applySelection(input.files && input.files[0]);
+                });
+
+                ['dragenter', 'dragover'].forEach(function (evt) {
+                    zone.addEventListener(evt, function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        zone.classList.add('is-dragover');
+                    });
+                });
+
+                ['dragleave', 'drop'].forEach(function (evt) {
+                    zone.addEventListener(evt, function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        zone.classList.remove('is-dragover');
+                    });
+                });
+
+                zone.addEventListener('drop', function (e) {
+                    var files = e.dataTransfer && e.dataTransfer.files;
+                    if (!files || files.length === 0) return;
+                    var file = files[0];
+                    if (isCsv(file)) {
+                        var dt = new DataTransfer();
+                        dt.items.add(file);
+                        input.files = dt.files;
+                        applySelection(file);
+                    } else {
+                        applySelection(file);
+                    }
+                });
+            });
+        })();
+    </script>
+}

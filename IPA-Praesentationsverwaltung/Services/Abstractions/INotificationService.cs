@@ -13,4 +13,14 @@ public interface INotificationService
 
     /// <summary>Notifies an administrator that the assignment phase is complete.</summary>
     Task SendAdminNotificationAsync(Admin admin, string message, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Notifies a student that their presentation selection has been changed by an
+    /// administrator. The current list of registered presentations is included so
+    /// the student can review the new state.
+    /// </summary>
+    Task SendSelectionChangedByAdminAsync(
+        Student student,
+        IReadOnlyList<Presentation> currentSelections,
+        CancellationToken cancellationToken = default);
 }

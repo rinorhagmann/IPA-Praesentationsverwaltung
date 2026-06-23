@@ -42,16 +42,26 @@
             <span class="badge-status badge-selected">✓ AUSGEWÄHLT</span>
         </div>
         <div class="col-action">
-            <form asp-controller="Student" asp-action="RemoveSelection" method="post" class="m-0">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="registrationId" value="@item.Id" />
-                <button type="submit" class="btn btn-outline-secondary btn-sm">Entfernen</button>
-            </form>
+            @if (!Model.IsSelectionConfirmed)
+            {
+                <form asp-controller="Student" asp-action="RemoveSelection" method="post" class="m-0">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="registrationId" value="@item.Id" />
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">Entfernen</button>
+                </form>
+            }
         </div>
     </div>
 }
 
-@if (Model.HasCompletedSelection)
+@if (Model.IsSelectionConfirmed)
+{
+    <div class="wgbs-card text-center mt-3">
+        <strong>Auswahl bereits getätigt.</strong>
+        <div class="text-muted small mt-1">Diese Auswahl ist verbindlich und kann nicht mehr geändert werden.</div>
+    </div>
+}
+else if (Model.HasCompletedSelection)
 {
     <div class="text-center mt-3">
         <a class="btn btn-wgbs-dark" asp-controller="Student" asp-action="Confirm">Auswahl bestätigen</a>

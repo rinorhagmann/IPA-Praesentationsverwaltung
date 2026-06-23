@@ -6,9 +6,13 @@
 }
 
 <h1>Präsentationen</h1>
-@if (Model.HasCompletedSelection)
+@if (Model.IsSelectionConfirmed)
 {
-    <p class="text-muted">Sie haben Ihre Auswahl bereits abgeschlossen. Sie können sie unter „Meine Auswahl" überprüfen.</p>
+    <p class="text-muted">Ihre Auswahl wurde bereits bestätigt und kann nicht mehr geändert werden.</p>
+}
+else if (Model.HasCompletedSelection)
+{
+    <p class="text-muted">Sie haben Ihre Auswahl bereits abgeschlossen. Sie können sie unter „Meine Auswahl" überprüfen und bestätigen.</p>
 }
 else
 {
@@ -65,7 +69,7 @@ else
             {
                 <button class="btn btn-wgbs-dark disabled" disabled>Ausgewählt</button>
             }
-            else if (Model.HasCompletedSelection || !item.HasFreeSeats)
+            else if (Model.IsSelectionConfirmed || Model.HasCompletedSelection || !item.HasFreeSeats)
             {
                 <button class="btn btn-wgbs-dark disabled" disabled>Auswählen</button>
             }
@@ -81,7 +85,7 @@ else
     </div>
 }
 
-@if (Model.HasCompletedSelection)
+@if (Model.HasCompletedSelection && !Model.IsSelectionConfirmed)
 {
     <div class="text-center mt-3">
         <a class="btn btn-wgbs-dark" asp-controller="Student" asp-action="Confirm">Auswahl bestätigen</a>

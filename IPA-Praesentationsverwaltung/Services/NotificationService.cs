@@ -80,4 +80,46 @@ public sealed class NotificationService : INotificationService
 
         return _emailSender.SendAsync(admin.Email, "Information zur Präsentationszuteilung", body, cancellationToken);
     }
+
+    public Task SendSelectionChangedByAdminAsync(
+        Student student,
+        IReadOnlyList<Presentation> currentSelections,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(student);
+        ArgumentNullException.ThrowIfNull(currentSelections);
+
+        var builder = new StringBuilder()
+            .AppendLine($"Guten Tag {student.GetFullName()}")
+            .AppendLine()
+            .AppendLine("Ihre Präsentationsauswahl wurde durch die Administration angepasst.")
+            .AppendLine();
+
+        if (currentSelections.Count == 0)
+        {
+            builder.AppendLine("Sie sind aktuell für keine Präsentation eingetragen.");
+        }
+        else
+        {
+            builder.AppendLine("Ihre aktuelle Auswahl:");
+            foreach (Presentation presentation in currentSelections)
+            {
+                builder.AppendLine(
+                    $"- {presentation.StartsAt.ToString("dd.MM.yyyy HH:mm", Swiss)} Uhr, " +
+                    $"Raum {presentation.Room?.Name}: {presentation.Topic}");
+            }
+        }
+
+        builder.AppendLine()
+               .AppendLine("Bei Fragen wenden Sie sich bitte an die Schulleitung.")
+               .AppendLine()
+               .AppendLine("Freundliche Grüsse")
+               .AppendLine("Wirtschaftsgymnasium Basel");
+
+        return _emailSender.SendAsync(
+            student.Email,
+            "Änderung Ihrer Präsentationsauswahl",
+            builder.ToString(),
+            cancellationToken);
+    }
 }

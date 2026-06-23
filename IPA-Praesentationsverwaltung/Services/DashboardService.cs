@@ -1,5 +1,4 @@
 using IPA_Praesentationsverwaltung.Data;
-using IPA_Praesentationsverwaltung.Models.Domain;
 using IPA_Praesentationsverwaltung.Models.ViewModels;
 using IPA_Praesentationsverwaltung.Services.Abstractions;
 using Microsoft.EntityFrameworkCore;
@@ -21,22 +20,18 @@ public sealed class DashboardService : IDashboardService
         int totalStudents = await _dbContext.Students.CountAsync(cancellationToken);
         int totalPresentations = await _dbContext.Presentations.CountAsync(cancellationToken);
 
-        // Number of registrations per student, used to derive completion figures.
-        List<int> registrationsPerStudent = await _dbContext.Students
-            .Select(s => s.Registrations.Count)
-            .ToListAsync(cancellationToken);
+        int studentsWithoutRegistration = await _dbContext.Students
+            .CountAsync(s => !s.Registrations.Any(), cancellationToken);
 
-        int completed = registrationsPerStudent.Count(count => count >= Student.RequiredSelectionCount);
-
-        // Outstanding registrations: how many selections are still missing overall.
-        int pending = registrationsPerStudent.Sum(count => Math.Max(0, Student.RequiredSelectionCount - count));
+        int presentationsWithoutObservers = await _dbContext.Presentations
+            .CountAsync(p => !p.Registrations.Any(), cancellationToken);
 
         return new DashboardViewModel
         {
             TotalStudents = totalStudents,
-            StudentsWithCompleteSelection = completed,
             TotalPresentations = totalPresentations,
-            PendingRegistrations = pending
+            StudentsWithoutRegistration = studentsWithoutRegistration,
+            PresentationsWithoutObservers = presentationsWithoutObservers
         };
     }
 }

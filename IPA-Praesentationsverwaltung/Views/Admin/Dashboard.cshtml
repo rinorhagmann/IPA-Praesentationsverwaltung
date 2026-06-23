@@ -10,8 +10,8 @@
 <div class="stat-grid">
     <div class="stat-card">
         <div>
-            <div class="stat-label">Angemeldete SuS</div>
-            <div class="stat-value">@Model.StudentsWithCompleteSelection/@Model.TotalStudents</div>
+            <div class="stat-label">Schüler insgesamt</div>
+            <div class="stat-value">@Model.TotalStudents</div>
         </div>
         <div class="stat-icon">👥</div>
     </div>
@@ -26,16 +26,17 @@
 
     <div class="stat-card">
         <div>
-            <div class="stat-label">Ausstehende Eintragungen</div>
-            <div class="stat-value">@Model.PendingRegistrations</div>
+            <div class="stat-label">Schüler ohne Eintragung</div>
+            <div class="stat-value">@Model.StudentsWithoutRegistration</div>
         </div>
         <div class="stat-icon">⚠</div>
     </div>
-</div>
 
-<div class="mt-4">
-    <form asp-controller="Admin" asp-action="SendConfirmations" method="post" class="d-inline">
-        @Html.AntiForgeryToken()
-        <button type="submit" class="btn btn-wgbs-dark">Bestätigungen an alle versenden</button>
-    </form>
+    <div class="stat-card">
+        <div>
+            <div class="stat-label">Präsentationen ohne Zuseher</div>
+            <div class="stat-value">@Model.PresentationsWithoutObservers</div>
+        </div>
+        <div class="stat-icon">👁</div>
+    </div>
 </div>

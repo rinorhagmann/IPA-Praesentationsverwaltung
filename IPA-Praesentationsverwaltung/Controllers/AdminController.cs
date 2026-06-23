@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace IPA_Praesentationsverwaltung.Controllers;
 
 /// <summary>
-/// Administration area: dashboard, system reset, administrator management and
-/// triggering of confirmation e-mails.
+/// Administration area: dashboard, system reset and administrator management.
 /// </summary>
 [Authorize(Roles = RoleNames.Admin)]
 public class AdminController : Controller
@@ -17,24 +16,15 @@ public class AdminController : Controller
     private readonly IDashboardService _dashboardService;
     private readonly ISystemResetService _systemResetService;
     private readonly IAdminAccountService _adminAccountService;
-    private readonly IStudentService _studentService;
-    private readonly IRegistrationService _registrationService;
-    private readonly INotificationService _notificationService;
 
     public AdminController(
         IDashboardService dashboardService,
         ISystemResetService systemResetService,
-        IAdminAccountService adminAccountService,
-        IStudentService studentService,
-        IRegistrationService registrationService,
-        INotificationService notificationService)
+        IAdminAccountService adminAccountService)
     {
         _dashboardService = dashboardService;
         _systemResetService = systemResetService;
         _adminAccountService = adminAccountService;
-        _studentService = studentService;
-        _registrationService = registrationService;
-        _notificationService = notificationService;
     }
 
     [HttpGet]
@@ -55,37 +45,6 @@ public class AdminController : Controller
     {
         await _systemResetService.ResetSchoolYearAsync();
         TempData["Success"] = "Das System wurde zurückgesetzt. Alle Präsentationen, Schüler/innen und Eintragungen wurden gelöscht.";
-        return RedirectToAction(nameof(Dashboard));
-    }
-
-    // ----- Confirmation e-mails ---------------------------------------------
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SendConfirmations()
-    {
-        IReadOnlyList<Student> students = await _studentService.GetAllStudentsAsync();
-        int sent = 0;
-
-        foreach (Student student in students)
-        {
-            IReadOnlyList<Registration> registrations =
-                await _registrationService.GetRegistrationsByStudentAsync(student.Id);
-            if (registrations.Count == 0)
-            {
-                continue;
-            }
-
-            List<Presentation> presentations = registrations
-                .Where(r => r.Presentation is not null)
-                .Select(r => r.Presentation!)
-                .ToList();
-
-            await _notificationService.SendConfirmationAsync(student, presentations);
-            sent++;
-        }
-
-        TempData["Success"] = $"Bestätigungen wurden an {sent} Schüler/innen versendet.";
         return RedirectToAction(nameof(Dashboard));
     }
 
@@ -162,6 +121,13 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteAdmin(int id)
     {
+        int? currentUserId = User.GetUserId();
+        if (currentUserId == id)
+        {
+            TempData["Error"] = "Sie können Ihren eigenen Administrator-Login nicht löschen.";
+            return RedirectToAction(nameof(ManageAdmins));
+        }
+
         bool deleted = await _adminAccountService.DeleteAdminAsync(id);
         TempData[deleted ? "Success" : "Error"] = deleted
             ? "Der Administrator-Login wurde gelöscht."

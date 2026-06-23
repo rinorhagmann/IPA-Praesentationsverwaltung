@@ -38,6 +38,7 @@ public class StudentController : Controller
     {
         int studentId = CurrentStudentId();
 
+        Student? student = await _studentService.GetStudentByIdAsync(studentId);
         IReadOnlyList<Presentation> presentations = await _presentationService.GetAllPresentationsAsync();
         HashSet<int> selectedIds = (await _registrationService.GetRegistrationsByStudentAsync(studentId))
             .Select(r => r.PresentationId)
@@ -50,7 +51,8 @@ public class StudentController : Controller
             AvailablePresentations = presentations
                 .Select(p => PresentationListItemViewModel.FromDomain(p, selectedIds.Contains(p.Id)))
                 .ToList(),
-            RemainingSelections = Student.RequiredSelectionCount - selectedIds.Count
+            RemainingSelections = Student.RequiredSelectionCount - selectedIds.Count,
+            IsSelectionConfirmed = student?.IsSelectionConfirmed ?? false
         };
 
         return View(model);
@@ -61,6 +63,12 @@ public class StudentController : Controller
     public async Task<IActionResult> Select(int presentationId)
     {
         int studentId = CurrentStudentId();
+
+        if (await IsSelectionLockedAsync(studentId))
+        {
+            TempData["Error"] = "Ihre Auswahl wurde bereits bestätigt und kann nicht mehr geändert werden.";
+            return RedirectToAction(nameof(Presentations));
+        }
 
         try
         {
@@ -88,6 +96,12 @@ public class StudentController : Controller
     {
         int studentId = CurrentStudentId();
 
+        if (await IsSelectionLockedAsync(studentId))
+        {
+            TempData["Error"] = "Ihre Auswahl wurde bereits bestätigt und kann nicht mehr geändert werden.";
+            return RedirectToAction(nameof(MySelection));
+        }
+
         // Guard: a student may only remove their own registrations.
         Registration? registration = await _registrationService.GetRegistrationByIdAsync(registrationId);
         if (registration is null || registration.StudentId != studentId)
@@ -104,6 +118,11 @@ public class StudentController : Controller
     public async Task<IActionResult> Confirm()
     {
         StudentSelectionViewModel model = await BuildSelectionModelAsync();
+        if (model.IsSelectionConfirmed)
+        {
+            return RedirectToAction(nameof(MySelection));
+        }
+
         if (!model.HasCompletedSelection)
         {
             TempData["Error"] = $"Bitte wählen Sie zuerst {Student.RequiredSelectionCount} Präsentationen aus.";
@@ -125,12 +144,19 @@ public class StudentController : Controller
             return Forbid();
         }
 
+        if (student.IsSelectionConfirmed)
+        {
+            return RedirectToAction(nameof(Success));
+        }
+
         IReadOnlyList<Registration> registrations = await _registrationService.GetRegistrationsByStudentAsync(studentId);
         if (registrations.Count < Student.RequiredSelectionCount)
         {
             TempData["Error"] = $"Bitte wählen Sie zuerst {Student.RequiredSelectionCount} Präsentationen aus.";
             return RedirectToAction(nameof(Presentations));
         }
+
+        await _studentService.MarkSelectionConfirmedAsync(studentId);
 
         List<Presentation> presentations = registrations
             .Where(r => r.Presentation is not null)
@@ -147,6 +173,7 @@ public class StudentController : Controller
     private async Task<StudentSelectionViewModel> BuildSelectionModelAsync()
     {
         int studentId = CurrentStudentId();
+        Student? student = await _studentService.GetStudentByIdAsync(studentId);
         IReadOnlyList<Registration> registrations = await _registrationService.GetRegistrationsByStudentAsync(studentId);
 
         return new StudentSelectionViewModel
@@ -157,8 +184,8 @@ public class StudentController : Controller
                 .Where(r => r.Presentation is not null)
                 .Select(r => new PresentationListItemViewModel
                 {
-                    Id = r.Presentation!.Id,
-                    Topic = r.Presentation.Topic,
+                    Id = r.Id,
+                    Topic = r.Presentation!.Topic,
                     StartsAt = r.Presentation.StartsAt,
                     RoomName = r.Presentation.Room?.Name ?? string.Empty,
                     MaxObservers = r.Presentation.MaxObservers,
@@ -166,8 +193,15 @@ public class StudentController : Controller
                     IsSelectedByStudent = true
                 })
                 .ToList(),
-            RemainingSelections = Student.RequiredSelectionCount - registrations.Count
+            RemainingSelections = Student.RequiredSelectionCount - registrations.Count,
+            IsSelectionConfirmed = student?.IsSelectionConfirmed ?? false
         };
+    }
+
+    private async Task<bool> IsSelectionLockedAsync(int studentId)
+    {
+        Student? student = await _studentService.GetStudentByIdAsync(studentId);
+        return student?.IsSelectionConfirmed ?? false;
     }
 
     // The student id is taken from the authenticated principal, never from input.
