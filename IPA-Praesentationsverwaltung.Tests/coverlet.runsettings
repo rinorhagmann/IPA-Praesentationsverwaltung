@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <!--
+            Exclude auto-generated code that cannot be meaningfully unit tested:
+            compiled Razor views, EF Core migrations and the Program bootstrap.
+          -->
+          <Exclude>[*]AspNetCoreGeneratedDocument.*,[IPA-Praesentationsverwaltung]IPA_Praesentationsverwaltung.Data.Migrations.*,[IPA-Praesentationsverwaltung]Program</Exclude>
+          <ExcludeByFile>**/Migrations/*.cs</ExcludeByFile>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
