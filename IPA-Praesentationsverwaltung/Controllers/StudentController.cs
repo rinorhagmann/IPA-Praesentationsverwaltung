@@ -40,18 +40,22 @@ public class StudentController : Controller
 
         Student? student = await _studentService.GetStudentByIdAsync(studentId);
         IReadOnlyList<Presentation> presentations = await _presentationService.GetAllPresentationsAsync();
-        HashSet<int> selectedIds = (await _registrationService.GetRegistrationsByStudentAsync(studentId))
-            .Select(r => r.PresentationId)
-            .ToHashSet();
+        IReadOnlyList<Registration> studentRegistrations =
+            await _registrationService.GetRegistrationsByStudentAsync(studentId);
+        Dictionary<int, int> registrationByPresentation =
+            studentRegistrations.ToDictionary(r => r.PresentationId, r => r.Id);
 
         var model = new StudentSelectionViewModel
         {
             StudentId = studentId,
             StudentName = User.GetDisplayName(),
             AvailablePresentations = presentations
-                .Select(p => PresentationListItemViewModel.FromDomain(p, selectedIds.Contains(p.Id)))
+                .Select(p => PresentationListItemViewModel.FromDomain(
+                    p,
+                    registrationByPresentation.ContainsKey(p.Id),
+                    registrationByPresentation.TryGetValue(p.Id, out int regId) ? regId : null))
                 .ToList(),
-            RemainingSelections = Student.RequiredSelectionCount - selectedIds.Count,
+            RemainingSelections = Student.RequiredSelectionCount - studentRegistrations.Count,
             IsSelectionConfirmed = student?.IsSelectionConfirmed ?? false
         };
 
@@ -92,14 +96,15 @@ public class StudentController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> RemoveSelection(int registrationId)
+    public async Task<IActionResult> RemoveSelection(int registrationId, string? returnTo = null)
     {
         int studentId = CurrentStudentId();
+        string redirectAction = returnTo == "presentations" ? nameof(Presentations) : nameof(MySelection);
 
         if (await IsSelectionLockedAsync(studentId))
         {
             TempData["Error"] = "Ihre Auswahl wurde bereits bestätigt und kann nicht mehr geändert werden.";
-            return RedirectToAction(nameof(MySelection));
+            return RedirectToAction(redirectAction);
         }
 
         // Guard: a student may only remove their own registrations.
@@ -111,7 +116,7 @@ public class StudentController : Controller
 
         await _registrationService.DeleteRegistrationAsync(registrationId);
         TempData["Success"] = "Die Präsentation wurde aus Ihrer Auswahl entfernt.";
-        return RedirectToAction(nameof(MySelection));
+        return RedirectToAction(redirectAction);
     }
 
     [HttpGet]

@@ -193,34 +193,61 @@ a {
     box-shadow: var(--shadow-soft);
     padding: 1.1rem 1.5rem;
     margin-bottom: 1rem;
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 2.6fr) repeat(4, minmax(0, 1fr)) auto auto;
     align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
+    gap: 1rem 1.25rem;
 }
 
 .presentation-row .col-field {
-    flex: 1 1 90px;
-    min-width: 80px;
+    min-width: 0;
 }
 
 .presentation-row .col-field .label {
     font-weight: 700;
     font-size: 0.95rem;
+    margin-bottom: 0.15rem;
 }
 
 .presentation-row .col-field .value {
     color: #374151;
     font-size: 0.9rem;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+}
+
+.presentation-row .col-field--topic .value {
+    font-weight: 600;
+    color: var(--wgbs-dark);
 }
 
 .presentation-row .col-action {
-    flex: 0 0 auto;
-    margin-left: auto;
+    justify-self: end;
 }
 
 .presentation-row .col-action .btn {
-    min-width: 150px;
+    min-width: 140px;
+}
+
+@media (max-width: 992px) {
+    .presentation-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .presentation-row .col-field--topic {
+        grid-column: 1 / -1;
+    }
+
+    .presentation-row .col-action {
+        grid-column: 1 / -1;
+        justify-self: stretch;
+    }
+
+    .presentation-row .col-action .row-actions {
+        justify-content: flex-end;
+    }
 }
 
 /* =====================  Admin sidebar layout  ============================= */
@@ -241,6 +268,10 @@ a {
 
 .admin-sidebar .logo {
     height: 40px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    align-self: flex-start;
     margin: 0.25rem 0.75rem 1.75rem;
 }
 
@@ -389,6 +420,73 @@ a {
     border-radius: var(--radius);
     box-shadow: var(--shadow-soft);
     padding: 1.25rem 1.5rem;
+}
+
+/* Inline action buttons inside table rows (Bearbeiten / Löschen / ...). */
+.row-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+}
+
+.row-actions form {
+    margin: 0;
+}
+
+/* ----- Search + pagination toolbar --------------------------------------- */
+.list-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.list-toolbar .search-input {
+    flex: 1 1 auto;
+    width: 100%;
+}
+
+.list-empty {
+    padding: 1.25rem;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.pager {
+    display: flex;
+    justify-content: center;
+    gap: 0.35rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.pager .page-link {
+    background: #fff;
+    color: var(--wgbs-dark);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.pager .page-link:hover:not(:disabled):not(.active) {
+    background: #f3f4f6;
+}
+
+.pager .page-link.active {
+    background: var(--wgbs-dark);
+    border-color: var(--wgbs-dark);
+    color: #fff;
+    cursor: default;
+}
+
+.pager .page-link:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 /* ----- Print view --------------------------------------------------------- */

@@ -19,10 +19,17 @@ public class PresentationListItemViewModel
     /// <summary>Whether the current student has already selected this presentation.</summary>
     public bool IsSelectedByStudent { get; init; }
 
+    /// <summary>
+    /// When <see cref="IsSelectedByStudent"/> is true, holds the id of the
+    /// registration row so the student can remove the selection.
+    /// </summary>
+    public int? RegistrationId { get; init; }
+
     public int FreeSeats => Math.Max(0, MaxObservers - TakenSeats);
     public bool HasFreeSeats => FreeSeats > 0;
 
-    public static PresentationListItemViewModel FromDomain(Presentation presentation, bool isSelectedByStudent)
+    public static PresentationListItemViewModel FromDomain(
+        Presentation presentation, bool isSelectedByStudent, int? registrationId = null)
     {
         ArgumentNullException.ThrowIfNull(presentation);
         return new PresentationListItemViewModel
@@ -33,7 +40,8 @@ public class PresentationListItemViewModel
             RoomName = presentation.Room?.Name ?? string.Empty,
             MaxObservers = presentation.MaxObservers,
             TakenSeats = presentation.Registrations.Count,
-            IsSelectedByStudent = isSelectedByStudent
+            IsSelectedByStudent = isSelectedByStudent,
+            RegistrationId = registrationId
         };
     }
 }

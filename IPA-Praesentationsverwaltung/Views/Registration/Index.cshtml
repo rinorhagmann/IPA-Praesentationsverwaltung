@@ -10,35 +10,52 @@
     <a class="btn btn-wgbs-dark" asp-controller="Registration" asp-action="Create">Neue Eintragung</a>
 </div>
 
-<div class="table-card">
-    <table class="table align-middle m-0">
-        <thead>
-            <tr>
-                <th>Schüler/in</th>
-                <th>Präsentation</th>
-                <th>Datum / Uhrzeit</th>
-                <th>Eingetragen am</th>
-                <th class="text-end">Aktionen</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var r in Model)
-            {
+<div data-paginate data-page-size="10" data-items="tbody tr.js-row">
+    <div class="list-toolbar">
+        <input type="search" data-search-input
+               class="form-control search-input"
+               placeholder="Suchen nach Schüler, Präsentation oder Datum..." />
+    </div>
+
+    <div class="table-card">
+        <table class="table align-middle m-0">
+            <thead>
                 <tr>
-                    <td>@(r.Student?.GetFullName())</td>
-                    <td>@(r.Presentation?.Topic)</td>
-                    <td>@(r.Presentation?.StartsAt.ToString("dd.MM.yyyy HH:mm")) Uhr</td>
-                    <td>@r.RegisteredAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
-                    <td class="text-end">
-                        <a class="btn btn-sm btn-outline-secondary" asp-controller="Registration" asp-action="Edit" asp-route-id="@r.Id">Bearbeiten</a>
-                        <form asp-controller="Registration" asp-action="Delete" asp-route-id="@r.Id" method="post"
-                              class="d-inline" onsubmit="return confirm('Diese Eintragung löschen?');">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-wgbs-danger">Löschen</button>
-                        </form>
-                    </td>
+                    <th>Schüler/in</th>
+                    <th>Präsentation</th>
+                    <th>Datum / Uhrzeit</th>
+                    <th>Eingetragen am</th>
+                    <th class="text-end">Aktionen</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    string studentName = r.Student?.GetFullName() ?? string.Empty;
+                    string topic = r.Presentation?.Topic ?? string.Empty;
+                    string when = r.Presentation?.StartsAt.ToString("dd.MM.yyyy HH:mm") ?? string.Empty;
+                    string searchText = $"{studentName} {topic} {when} {r.Student?.Email}".ToLowerInvariant();
+                    <tr class="js-row" data-search="@searchText">
+                        <td>@studentName</td>
+                        <td>@topic</td>
+                        <td>@when Uhr</td>
+                        <td>@r.RegisteredAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                        <td class="text-end">
+                            <div class="row-actions">
+                                <a class="btn btn-sm btn-outline-secondary" asp-controller="Registration" asp-action="Edit" asp-route-id="@r.Id">Bearbeiten</a>
+                                <form asp-controller="Registration" asp-action="Delete" asp-route-id="@r.Id" method="post"
+                                      onsubmit="return confirm('Diese Eintragung löschen?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-wgbs-danger">Löschen</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div data-empty class="list-empty d-none">Keine Eintragungen gefunden.</div>
+    <div data-pager class="pager"></div>
 </div>

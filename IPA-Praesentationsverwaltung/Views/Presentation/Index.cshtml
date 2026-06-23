@@ -10,35 +10,50 @@
     <a class="btn btn-wgbs-dark" asp-controller="Presentation" asp-action="Create">Neue Präsentation</a>
 </div>
 
-<div class="table-card">
-    <table class="table align-middle m-0">
-        <thead>
-            <tr>
-                <th>Thema</th>
-                <th>Datum / Uhrzeit</th>
-                <th>Raum</th>
-                <th>Zuseher</th>
-                <th class="text-end">Aktionen</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var p in Model)
-            {
+<div data-paginate data-page-size="10" data-items="tbody tr.js-row">
+    <div class="list-toolbar">
+        <input type="search" data-search-input
+               class="form-control search-input"
+               placeholder="Suchen nach Thema, Raum oder Datum..." />
+    </div>
+
+    <div class="table-card">
+        <table class="table align-middle m-0">
+            <thead>
                 <tr>
-                    <td>@p.Topic</td>
-                    <td>@p.StartsAt.ToString("dd.MM.yyyy HH:mm") Uhr</td>
-                    <td>@p.Room?.Name</td>
-                    <td>@p.Registrations.Count / @p.MaxObservers</td>
-                    <td class="text-end">
-                        <a class="btn btn-sm btn-outline-secondary" asp-controller="Presentation" asp-action="Edit" asp-route-id="@p.Id">Bearbeiten</a>
-                        <form asp-controller="Presentation" asp-action="Delete" asp-route-id="@p.Id" method="post"
-                              class="d-inline" onsubmit="return confirm('Diese Präsentation löschen?');">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-wgbs-danger">Löschen</button>
-                        </form>
-                    </td>
+                    <th>Thema</th>
+                    <th>Datum / Uhrzeit</th>
+                    <th>Raum</th>
+                    <th>Zuseher</th>
+                    <th class="text-end">Aktionen</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    string date = p.StartsAt.ToString("dd.MM.yyyy HH:mm");
+                    string searchText = $"{p.Topic} {p.Room?.Name} {date}".ToLowerInvariant();
+                    <tr class="js-row" data-search="@searchText">
+                        <td>@p.Topic</td>
+                        <td>@date Uhr</td>
+                        <td>@p.Room?.Name</td>
+                        <td>@p.Registrations.Count / @p.MaxObservers</td>
+                        <td class="text-end">
+                            <div class="row-actions">
+                                <a class="btn btn-sm btn-outline-secondary" asp-controller="Presentation" asp-action="Edit" asp-route-id="@p.Id">Bearbeiten</a>
+                                <form asp-controller="Presentation" asp-action="Delete" asp-route-id="@p.Id" method="post"
+                                      onsubmit="return confirm('Diese Präsentation löschen?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-wgbs-danger">Löschen</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div data-empty class="list-empty d-none">Keine Präsentationen gefunden.</div>
+    <div data-pager class="pager"></div>
 </div>

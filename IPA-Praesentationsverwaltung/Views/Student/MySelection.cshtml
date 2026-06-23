@@ -18,7 +18,7 @@
 @foreach (var item in Model.CurrentSelections)
 {
     <div class="presentation-row">
-        <div class="col-field">
+        <div class="col-field col-field--topic">
             <div class="label">Thema</div>
             <div class="value">@item.Topic</div>
         </div>
@@ -39,7 +39,7 @@
             <div class="value">max. @item.MaxObservers Plätze</div>
         </div>
         <div class="col-field">
-            <span class="badge-status badge-selected">✓ AUSGEWÄHLT</span>
+            <span class="badge-status badge-selected">AUSGEWÄHLT</span>
         </div>
         <div class="col-action">
             @if (!Model.IsSelectionConfirmed)

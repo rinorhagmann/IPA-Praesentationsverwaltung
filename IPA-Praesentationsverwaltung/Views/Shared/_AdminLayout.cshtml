@@ -32,7 +32,7 @@
             <div class="sidebar-footer">
                 <form asp-controller="Auth" asp-action="Logout" method="post" class="m-0">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start">⏻ Logout</button>
+                    <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start">⏻ Abmelden</button>
                 </form>
             </div>
         </aside>
@@ -45,6 +45,7 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/search-paginate.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

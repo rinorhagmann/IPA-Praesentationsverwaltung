@@ -10,42 +10,57 @@
     <a class="btn btn-wgbs-dark" asp-controller="StudentManagement" asp-action="Create">Neue/r Schüler/in</a>
 </div>
 
-<div class="table-card">
-    <table class="table align-middle m-0">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>E-Mail</th>
-                <th>Zugangsdaten</th>
-                <th class="text-end">Aktionen</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var student in Model)
-            {
+<div data-paginate data-page-size="10" data-items="tbody tr.js-row">
+    <div class="list-toolbar">
+        <input type="search" data-search-input
+               class="form-control search-input"
+               placeholder="Suchen nach Name oder E-Mail..." />
+    </div>
+
+    <div class="table-card">
+        <table class="table align-middle m-0">
+            <thead>
                 <tr>
-                    <td>@student.GetFullName()</td>
-                    <td>@student.Email</td>
-                    <td>
-                        @if (student.InitialPasswordSent)
-                        {
-                            <span class="badge-status badge-free">versendet</span>
-                        }
-                        else
-                        {
-                            <span class="badge-status badge-full">ausstehend</span>
-                        }
-                    </td>
-                    <td class="text-end">
-                        <a class="btn btn-sm btn-outline-secondary" asp-controller="StudentManagement" asp-action="Edit" asp-route-id="@student.Id">Bearbeiten</a>
-                        <form asp-controller="StudentManagement" asp-action="Delete" asp-route-id="@student.Id" method="post"
-                              class="d-inline" onsubmit="return confirm('Diese/n Schüler/in löschen?');">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-wgbs-danger">Löschen</button>
-                        </form>
-                    </td>
+                    <th>Name</th>
+                    <th>E-Mail</th>
+                    <th>Zugangsdaten</th>
+                    <th class="text-end">Aktionen</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var student in Model)
+                {
+                    string credentialStatus = student.InitialPasswordSent ? "versendet" : "ausstehend";
+                    string searchText = $"{student.GetFullName()} {student.Email} {credentialStatus}".ToLowerInvariant();
+                    <tr class="js-row" data-search="@searchText">
+                        <td>@student.GetFullName()</td>
+                        <td>@student.Email</td>
+                        <td>
+                            @if (student.InitialPasswordSent)
+                            {
+                                <span class="badge-status badge-free">versendet</span>
+                            }
+                            else
+                            {
+                                <span class="badge-status badge-full">ausstehend</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <div class="row-actions">
+                                <a class="btn btn-sm btn-outline-secondary" asp-controller="StudentManagement" asp-action="Edit" asp-route-id="@student.Id">Bearbeiten</a>
+                                <form asp-controller="StudentManagement" asp-action="Delete" asp-route-id="@student.Id" method="post"
+                                      onsubmit="return confirm('Diese/n Schüler/in löschen?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-wgbs-danger">Löschen</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div data-empty class="list-empty d-none">Keine Schüler/innen gefunden.</div>
+    <div data-pager class="pager"></div>
 </div>

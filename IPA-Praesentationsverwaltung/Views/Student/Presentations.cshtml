@@ -26,62 +26,92 @@ else
 {
     <div class="wgbs-card">Zurzeit sind keine Präsentationen verfügbar.</div>
 }
-
-@foreach (var item in Model.AvailablePresentations)
+else
 {
-    <div class="presentation-row">
-        <div class="col-field">
-            <div class="label">Thema</div>
-            <div class="value">@item.Topic</div>
+    <div data-paginate data-page-size="10" data-items=".presentation-row.js-row">
+        <div class="list-toolbar">
+            <input type="search" data-search-input
+                   class="form-control search-input"
+                   placeholder="Suchen nach Thema, Raum oder Datum..." />
         </div>
-        <div class="col-field">
-            <div class="label">Datum</div>
-            <div class="value">@item.StartsAt.ToString("dd.MM.yyyy")</div>
-        </div>
-        <div class="col-field">
-            <div class="label">Uhrzeit</div>
-            <div class="value">@item.StartsAt.ToString("HH:mm") Uhr</div>
-        </div>
-        <div class="col-field">
-            <div class="label">Raum</div>
-            <div class="value">@item.RoomName</div>
-        </div>
-        <div class="col-field">
-            <div class="label">Freie Plätze</div>
-            <div class="value">@item.FreeSeats von @item.MaxObservers Plätzen</div>
-        </div>
-        <div class="col-field">
-            @if (item.IsSelectedByStudent)
-            {
-                <span class="badge-status badge-selected">✓ AUSGEWÄHLT</span>
-            }
-            else if (item.HasFreeSeats)
-            {
-                <span class="badge-status badge-free">✓ FREI</span>
-            }
-            else
-            {
-                <span class="badge-status badge-full">✕ VOLL</span>
-            }
-        </div>
-        <div class="col-action">
-            @if (item.IsSelectedByStudent)
-            {
-                <button class="btn btn-wgbs-dark disabled" disabled>Ausgewählt</button>
-            }
-            else if (Model.IsSelectionConfirmed || Model.HasCompletedSelection || !item.HasFreeSeats)
-            {
-                <button class="btn btn-wgbs-dark disabled" disabled>Auswählen</button>
-            }
-            else
-            {
-                <form asp-controller="Student" asp-action="Select" method="post" class="m-0">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="presentationId" value="@item.Id" />
-                    <button type="submit" class="btn btn-wgbs-dark">Auswählen</button>
-                </form>
-            }
-        </div>
+
+        @foreach (var item in Model.AvailablePresentations)
+        {
+            string date = item.StartsAt.ToString("dd.MM.yyyy");
+            string time = item.StartsAt.ToString("HH:mm");
+            string searchText = $"{item.Topic} {item.RoomName} {date} {time}".ToLowerInvariant();
+            <div class="presentation-row js-row" data-search="@searchText">
+                <div class="col-field col-field--topic">
+                    <div class="label">Thema</div>
+                    <div class="value">@item.Topic</div>
+                </div>
+                <div class="col-field">
+                    <div class="label">Datum</div>
+                    <div class="value">@date</div>
+                </div>
+                <div class="col-field">
+                    <div class="label">Uhrzeit</div>
+                    <div class="value">@time Uhr</div>
+                </div>
+                <div class="col-field">
+                    <div class="label">Raum</div>
+                    <div class="value">@item.RoomName</div>
+                </div>
+                <div class="col-field">
+                    <div class="label">Freie Plätze</div>
+                    <div class="value">@item.FreeSeats von @item.MaxObservers Plätzen</div>
+                </div>
+                <div class="col-field">
+                    @if (item.IsSelectedByStudent)
+                    {
+                        <span class="badge-status badge-selected">AUSGEWÄHLT</span>
+                    }
+                    else if (item.HasFreeSeats)
+                    {
+                        <span class="badge-status badge-free">FREI</span>
+                    }
+                    else
+                    {
+                        <span class="badge-status badge-full">VOLL</span>
+                    }
+                </div>
+                <div class="col-action">
+                    <div class="row-actions">
+                        @if (item.IsSelectedByStudent)
+                        {
+                            if (!Model.IsSelectionConfirmed && item.RegistrationId.HasValue)
+                            {
+                                <form asp-controller="Student" asp-action="RemoveSelection" method="post" class="m-0">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="registrationId" value="@item.RegistrationId" />
+                                    <input type="hidden" name="returnTo" value="presentations" />
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">Entfernen</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <button class="btn btn-wgbs-dark disabled" disabled>Ausgewählt</button>
+                            }
+                        }
+                        else if (Model.IsSelectionConfirmed || Model.HasCompletedSelection || !item.HasFreeSeats)
+                        {
+                            <button class="btn btn-wgbs-dark disabled" disabled>Auswählen</button>
+                        }
+                        else
+                        {
+                            <form asp-controller="Student" asp-action="Select" method="post" class="m-0">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="presentationId" value="@item.Id" />
+                                <button type="submit" class="btn btn-wgbs-dark">Auswählen</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div data-empty class="list-empty d-none">Keine Präsentationen gefunden.</div>
+        <div data-pager class="pager"></div>
     </div>
 }
 
